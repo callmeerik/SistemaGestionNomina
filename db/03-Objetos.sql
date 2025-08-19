@@ -318,8 +318,8 @@ go
 
 -- procedure para lista todos los empleados
 CREATE OR ALTER PROCEDURE sp_getEmployees
-    @query NVARCHAR(100) = NULL,
-    @estado NVARCHAR(20) = 'Todos'
+    @query VARCHAR(100) = NULL,
+    @estado VARCHAR(20) = 'Todos'
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -410,15 +410,45 @@ END
 GO
 
 -- Procedure para actualizar estado de empleado
-CREATE PROCEDURE sp_updateEmployeeState
-    @emp_no INT,
-    @is_active BIT
+CREATE OR ALTER PROCEDURE sp_updateEmployeeState
+    @emp_no INT
 AS
 BEGIN
-    SET NOCOUNT ON;
-
     UPDATE employees
-    SET is_active = @is_active
+    SET is_active = CASE WHEN is_active = 1 THEN 0 ELSE 1 END
     WHERE emp_no = @emp_no;
 END
-Go
+GO
+
+-- procedure para obtener empleados por emp_no
+CREATE OR ALTER PROCEDURE sp_getEmployeeById
+    @emp_no INT
+AS
+BEGIN
+    SELECT emp_no, ci, first_name, last_name, correo, gender, birth_date, hire_date, is_active
+    FROM employees
+    WHERE emp_no = @emp_no;
+END
+GO
+
+--- procedure para actualizar datos del empleado
+CREATE OR ALTER PROCEDURE sp_UpdateEmployee
+    @emp_no INT,
+    @ci VARCHAR(10),
+    @first_name VARCHAR(50),
+    @last_name VARCHAR(50),
+    @correo VARCHAR(100),
+    @gender CHAR(1),
+    @birth_date VARCHAR(20)
+AS
+BEGIN
+    UPDATE employees
+    SET ci = @ci,
+        first_name = @first_name,
+        last_name = @last_name,
+        correo = @correo,
+        gender = @gender,
+        birth_date = @birth_date
+    WHERE emp_no = @emp_no;
+END
+GO
