@@ -5,16 +5,16 @@
 *.userosscache
 *.sln.docstates
 
-## Build results (dentro del proyecto SistemaNomina)
+## Build results (dentro del proyecto SistemaGestionNomina)
 
-app/SistemaNomina/obj/
-app/SistemaNomina/[Bb]uild/
-app/SistemaNomina/[Dd]ebug*/
-app/SistemaNomina/[Rr]elease*/
-app/SistemaNomina/x64/
-app/SistemaNomina/x86/
-app/SistemaNomina/[Aa][Rr][Mm]/
-app/SistemaNomina/[Aa][Rr][Mm]64/
+app/SistemaGestionNomina/obj/
+app/SistemaGestionNomina/[Bb]uild/
+app/SistemaGestionNomina/[Dd]ebug*/
+app/SistemaGestionNomina/[Rr]elease*/
+app/SistemaGestionNomina/x64/
+app/SistemaGestionNomina/x86/
+app/SistemaGestionNomina/[Aa][Rr][Mm]/
+app/SistemaGestionNomina/[Aa][Rr][Mm]64/
 
 ## Paquetes NuGet
 app/packages/
@@ -36,13 +36,13 @@ artifacts/
 *.swp
 
 ## Archivos de usuario de configuración y BD local
-app/SistemaNomina/App_Data/
+app/SistemaGestionNomina/App_Data/
 *.ldf
 *.mdf
 
 ## Archivos opcionales (descomenta si no quieres subir configuraciones locales)
-# app/SistemaNomina/Web.Debug.config
-# app/SistemaNomina/Web.Release.config
+# app/SistemaGestionNomina/Web.Debug.config
+# app/SistemaGestionNomina/Web.Release.config
 
 ## Rider, ReSharper y otros IDEs
 _ReSharper*/
