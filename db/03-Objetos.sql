@@ -419,3 +419,36 @@ BEGIN
     WHERE emp_no = @emp_no;
 END
 GO
+
+-- procedure para obtener empleados por emp_no
+CREATE OR ALTER PROCEDURE sp_getEmployeeById
+    @emp_no INT
+AS
+BEGIN
+    SELECT emp_no, ci, first_name, last_name, correo, gender, birth_date, hire_date, is_active
+    FROM employees
+    WHERE emp_no = @emp_no;
+END
+GO
+
+--- procedure para actualizar datos del empleado
+CREATE OR ALTER PROCEDURE sp_UpdateEmployee
+    @emp_no INT,
+    @ci VARCHAR(10),
+    @first_name VARCHAR(50),
+    @last_name VARCHAR(50),
+    @correo VARCHAR(100),
+    @gender CHAR(1),
+    @birth_date VARCHAR(20)
+AS
+BEGIN
+    UPDATE employees
+    SET ci = @ci,
+        first_name = @first_name,
+        last_name = @last_name,
+        correo = @correo,
+        gender = @gender,
+        birth_date = @birth_date
+    WHERE emp_no = @emp_no;
+END
+GO
