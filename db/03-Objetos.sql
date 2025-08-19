@@ -318,8 +318,8 @@ go
 
 -- procedure para lista todos los empleados
 CREATE OR ALTER PROCEDURE sp_getEmployees
-    @query NVARCHAR(100) = NULL,
-    @estado NVARCHAR(20) = 'Todos'
+    @query VARCHAR(100) = NULL,
+    @estado VARCHAR(20) = 'Todos'
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -410,15 +410,12 @@ END
 GO
 
 -- Procedure para actualizar estado de empleado
-CREATE PROCEDURE sp_updateEmployeeState
-    @emp_no INT,
-    @is_active BIT
+CREATE OR ALTER PROCEDURE sp_updateEmployeeState
+    @emp_no INT
 AS
 BEGIN
-    SET NOCOUNT ON;
-
     UPDATE employees
-    SET is_active = @is_active
+    SET is_active = CASE WHEN is_active = 1 THEN 0 ELSE 1 END
     WHERE emp_no = @emp_no;
 END
-Go
+GO
