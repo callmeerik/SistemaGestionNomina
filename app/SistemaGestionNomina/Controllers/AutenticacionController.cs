@@ -9,7 +9,7 @@ namespace SistemaGestionNomina.Controllers
     public class AutenticacionController : Controller
     {
         // GET: Autenticacion
-        public ActionResult Index()
+        public ActionResult Login()
         {
             return View();
         }

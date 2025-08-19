@@ -1,0 +1,17 @@
+﻿
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Página de Login</h2>
+
+<form method="post" action="/Authentication/Login">
+    <label>Usuario:</label>
+    <input type="text" name="username" />
+
+    <label>Contraseña:</label>
+    <input type="password" name="password" />
+
+    <button type="submit">Ingresar</button>
+</form>
