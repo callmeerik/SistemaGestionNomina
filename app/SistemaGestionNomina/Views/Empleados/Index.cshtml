@@ -1,7 +1,128 @@
-﻿
+﻿@model List<SistemaGestionNomina.Models.Empleados>
+
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Listado de Empleados";
+    int totalItems = ViewBag.TotalItems ?? 0;
+    int currentPage = ViewBag.PaginaActual ?? 1;
+    int pageSize = ViewBag.PaginaTamanio ?? 15;
+    int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+    string currentSearch = ViewBag.Busqueda as string;
+    string currentEstado = ViewBag.Estado as string ?? "Todos";
 }
 
-<h2>Index</h2>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Empleados</title>
+</head>
+<body>
+    <header class="d-flex justify-content-between align-items-center mb-3">
+        <h1>Lista de Empleados</h1>
 
+        <!-- Botón Crear Nuevo Empleado -->
+        <a href="@Url.Action("CrearEmpleado", "Empleados")" class="btn btn-success">Crear Nuevo Empleado</a>
+    </header>
+
+    <!-- Formulario de búsqueda -->
+    <form method="get" action="@Url.Action("Index", "Empleados")" class="form-inline mb-3">
+        <input type="text" name="query" value="@currentSearch" placeholder="Buscar..." class="form-control mr-2" />
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+
+    <!-- Radio buttons de estado -->
+    <fieldset class="mb-3">
+        <legend>Filtrar por estado</legend>
+        <label class="mr-2">
+            <input type="radio" name="estado" value="Todos" @(currentEstado == "Todos" ? "checked" : "")
+                   onchange="location.href='@Url.Action("Index","Empleados")?estado=Todos&query=@currentSearch'" /> Todos
+        </label>
+        <label class="mr-2">
+            <input type="radio" name="estado" value="Activo" @(currentEstado == "Activo" ? "checked" : "")
+                   onchange="location.href='@Url.Action("Index","Empleados")?estado=Activo&query=@currentSearch'" /> Activo
+        </label>
+        <label class="mr-2">
+            <input type="radio" name="estado" value="Desactivado" @(currentEstado == "Desactivado" ? "checked" : "")
+                   onchange="location.href='@Url.Action("Index","Empleados")?estado=Desactivado&query=@currentSearch'" /> Desactivado
+        </label>
+    </fieldset>
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">@TempData["Message"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+    <!-- Tabla de empleados -->
+    <main>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Cédula</th>
+                    <th>Nombres</th>
+                    <th>Correo</th>
+                    <th>Fecha Ingreso</th>
+                    <th>Activo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Count > 0)
+                {
+                    foreach (var emp in Model)
+                    {
+                        <tr>
+                            <td>@emp.ci</td>
+                            <td>@emp.first_name @emp.last_name</td>
+                            <td>@emp.correo</td>
+                            <td>@emp.hire_date</td>
+                            <td>@(emp.is_active ? "Sí" : "No")</td>
+                            <td>
+                                <!-- Botón Activar/Desactivar -->
+                                <form action="@Url.Action("CambiarEstado", "Empleados")" method="post" style="display:inline;">
+                                    <input type="hidden" name="emp_no" value="@emp.emp_no" />
+                                    <button type="submit" class="btn btn-sm @(emp.is_active ? "btn-danger" : "btn-success")">
+                                        @(emp.is_active ? "Desactivar" : "Activar")
+                                    </button>
+                                </form>
+
+                                <!-- Botón Editar -->
+                                <a href="@Url.Action("EditarEmpleado", "Empleados", new { id = emp.emp_no })" class="btn btn-sm btn-warning">
+                                    Editar
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="text-center">No hay empleados para mostrar.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger">
+                @ViewBag.Error
+            </div>
+        }
+    </main>
+
+    <!-- Paginación -->
+    @if (totalPages > 1)
+    {
+        <nav aria-label="Paginación">
+            <ul class="pagination">
+                @for (int i = 1; i <= totalPages; i++)
+                {
+                    <li class="page-item @(i == currentPage ? "active" : "")">
+                        <a class="page-link" href="@Url.Action("Index", "Empleados", new { pagina = i, query = currentSearch, estado = currentEstado })">@i</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+</body>
+</html>

@@ -67,7 +67,7 @@ namespace SistemaGestionNomina.Controllers
             }
             catch (SqlException ex)
             {
-                ViewBag.Error = ex.Message;
+                ViewBag.Error = "Error en base de datos: " + ex.Message;
                 return View(new List<Empleados>());
             }
             catch (Exception ex)
@@ -77,5 +77,37 @@ namespace SistemaGestionNomina.Controllers
             }
 
         }
+
+        [HttpPost]
+        public ActionResult CambiarEstado(int emp_no)
+        {
+            // Validacion en caso de que no se pase vlaores correctos al metodo
+            if ( emp_no <= 0 )
+            {
+                return View("Index");
+            }
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["Cnn"].ConnectionString))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand("sp_updateEmployeeState", conn);
+                    
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@emp_no", emp_no);
+                    cmd.ExecuteNonQuery();
+                    conn.Close();
+                }
+
+                TempData["Message"] = "Estado actualizado correctamente.";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error al actualizar estado: " + ex.Message;
+            }
+
+            return RedirectToAction("Index");
+        }
+
     }
 }
