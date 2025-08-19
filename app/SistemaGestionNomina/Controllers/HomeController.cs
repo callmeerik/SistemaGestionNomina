@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using SistemaGestionNomina.Filters;
+
 
 namespace SistemaGestionNomina.Controllers
 {
@@ -20,6 +22,8 @@ namespace SistemaGestionNomina.Controllers
             return View();
         }
 
+
+        [AuthorizeRole("user")]
         public ActionResult Contact()
         {
             ViewBag.Message = "Your contact page.";

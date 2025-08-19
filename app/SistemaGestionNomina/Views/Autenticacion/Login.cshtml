@@ -1,17 +1,28 @@
-﻿
+﻿@model SistemaGestionNomina.Models.Usuario
+
 @{
     ViewBag.Title = "Login";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Página de Login</h2>
+<h2>Iniciar Sesión</h2>
 
-<form method="post" action="/Authentication/Login">
-    <label>Usuario:</label>
-    <input type="text" name="username" />
+@using (Html.BeginForm("Login", "Autenticacion", FormMethod.Post))
+{
+    <div>
+        <label>Usuario:</label>
+        @Html.TextBoxFor(m => m.usuario, new { placeholder = "Ingrese su usuario" })
+    </div>
+    <div>
+        <label>Clave:</label>
+        @Html.PasswordFor(m => m.clave, new { placeholder = "Ingrese su contraseña" })
+    </div>
+    <div>
+        <button type="submit">Ingresar</button>
+    </div>
+}
 
-    <label>Contraseña:</label>
-    <input type="password" name="password" />
-
-    <button type="submit">Ingresar</button>
-</form>
+@if (ViewBag.Error != null)
+{
+    <p style="color:red;">@ViewBag.Error</p>
+}

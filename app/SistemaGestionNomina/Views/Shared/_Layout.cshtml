@@ -1,7 +1,9 @@
-﻿<!DOCTYPE html>
+﻿
+
+<!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - Mi aplicación ASP.NET</title>
@@ -19,12 +21,36 @@
             <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
                     <li>@Html.ActionLink("Inicio", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Contacto", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Login", "Index", "Autenticacion", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+
+                    @* Solo se muestra Contact si el usuario es Admin *@
+                    @if (Session["UserRole"] != null && Session["UserRole"].ToString() == "user")
+                    {
+                        <li>@Html.ActionLink("Contacto", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("Administrar Usuarios", "Index", "Users", new { area = "" }, new { @class = "nav-link" })</li>
+                    }
+                </ul>
+
+                <ul class="navbar-nav">
+                    @if (Session["UserName"] != null)
+                    {
+                        <li class="nav-item">
+                            <span class="nav-link text-white">Hola, @Session["UserName"] (@Session["UserRole"])</span>
+                        </li>
+                        <li>@Html.ActionLink("Cerrar Sesión", "Logout", "Authentication", new { area = "" }, new { @class = "nav-link" })</li>
+                    }
+                    else
+                    {
+                        <li>@Html.ActionLink("Login", "Login", "Autenticacion", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("Registrarse", "Register", "Autenticacion", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("Cerrar Sesión", "Logout", "Autenticacion", new { area = "" }, new { @class = "nav-link" })</li>
+
+                    }
                 </ul>
             </div>
         </div>
     </nav>
+
     <div class="container body-content">
         @RenderBody()
         <hr />

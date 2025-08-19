@@ -408,3 +408,68 @@ BEGIN
     END
 END
 GO
+
+
+
+
+
+
+
+
+
+
+
+
+-- CREACION DE AUTENTICACION
+CREATE OR ALTER PROCEDURE sp_userAuthentication
+    @usuario nvarchar(50),
+    @clave nvarchar(50),
+    @message nvarchar(100) OUTPUT
+AS
+BEGIN
+    -- Verificar si el usuario existe
+    IF NOT EXISTS (
+        SELECT 1 
+        FROM users u
+        WHERE u.usuario = @usuario
+    )
+    BEGIN
+        SET @message = 'El usuario ingresado no existe en el sistema';
+    END
+    ELSE
+    BEGIN
+        -- Verificar si la clave coincide con el usuario
+        IF NOT EXISTS (
+            SELECT 1
+            FROM users u
+            WHERE u.usuario = @usuario
+              AND u.clave = @clave
+        )
+        BEGIN
+            SET @message = 'El password es incorrecto';
+        END
+        ELSE
+        BEGIN
+            -- Autenticación exitosa
+            SET @message = 'Autenticacion exitosa';
+
+            SELECT 
+                u.usuario, 
+                u.clave,
+                u.rol
+            FROM users u
+            WHERE u.usuario = @usuario
+              AND u.clave = @clave;
+        END
+    END
+END
+GO
+
+DECLARE @mensajeSalida varchar(100);
+
+EXEC sp_userAuthentication
+    @usuario = 'lserrano',
+    @clave = 'usu2013',
+    @message = @mensajeSalida OUTPUT;
+
+SELECT @mensajeSalida AS Resultado;
