@@ -1,0 +1,56 @@
+## Archivos de usuario de Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## Build results (dentro del proyecto SistemaNomina)
+
+app/SistemaNomina/obj/
+app/SistemaNomina/[Bb]uild/
+app/SistemaNomina/[Dd]ebug*/
+app/SistemaNomina/[Rr]elease*/
+app/SistemaNomina/x64/
+app/SistemaNomina/x86/
+app/SistemaNomina/[Aa][Rr][Mm]/
+app/SistemaNomina/[Aa][Rr][Mm]64/
+
+## Paquetes NuGet
+app/packages/
+*.nupkg
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## Publicación y logs
+*.Publish.xml
+*.pubxml
+*.publishproj
+*.log
+
+## Archivos temporales
+*.tmp
+*.temp
+*.bak
+*.swp
+
+## Archivos de usuario de configuración y BD local
+app/SistemaNomina/App_Data/
+*.ldf
+*.mdf
+
+## Archivos opcionales (descomenta si no quieres subir configuraciones locales)
+# app/SistemaNomina/Web.Debug.config
+# app/SistemaNomina/Web.Release.config
+
+## Rider, ReSharper y otros IDEs
+_ReSharper*/
+*.DotSettings.user
+.idea/
+
+## Archivos de sistema (Windows/macOS)
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
