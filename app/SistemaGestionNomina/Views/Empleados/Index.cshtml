@@ -24,8 +24,13 @@
 
     <!-- Formulario de búsqueda -->
     <form method="get" action="@Url.Action("Index", "Empleados")" class="form-inline mb-3">
-        <input type="text" name="query" value="@currentSearch" placeholder="Buscar..." class="form-control mr-2" />
-        <button type="submit" class="btn btn-primary">Buscar</button>
+        <div class="input-group">
+            <input type="text" name="query" value="@currentSearch" placeholder="Buscar..." class="form-control" />
+            <div class="input-group-append">
+                <button type="submit" class="btn btn-primary">Buscar</button>
+                <a href="@Url.Action("Index", "Empleados")" class="btn btn-secondary">Resetear</a>
+            </div>
+        </div>
     </form>
 
     <!-- Radio buttons de estado -->
@@ -86,8 +91,8 @@
                                 </form>
 
                                 <!-- Botón Editar -->
-                                <a href="@Url.Action("EditarEmpleado", "Empleados", new { id = emp.emp_no })" class="btn btn-sm btn-warning">
-                                    Editar
+                                <a href="@Url.Action("EditarEmpleado", "Empleados", new { emp_no = emp.emp_no })" class="btn btn-sm btn-warning">
+                                    ✏ Editar
                                 </a>
                             </td>
                         </tr>

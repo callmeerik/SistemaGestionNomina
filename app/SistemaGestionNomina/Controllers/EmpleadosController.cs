@@ -8,6 +8,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Web.Mvc;
 using SistemaGestionNomina.Models;
+using System.Net.Configuration;
 
 namespace SistemaGestionNomina.Controllers
 {
@@ -108,6 +109,91 @@ namespace SistemaGestionNomina.Controllers
 
             return RedirectToAction("Index");
         }
+
+        [HttpGet]
+        public ActionResult EditarEmpleado(int emp_no)
+        {
+            Empleados emp = null;
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["Cnn"].ConnectionString))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand("sp_getEmployeeById", conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@emp_no", emp_no);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        emp = new Empleados
+                        {
+                            emp_no = Convert.ToInt32(reader["emp_no"]),
+                            ci = reader["ci"].ToString(),
+                            first_name = reader["first_name"].ToString(),
+                            last_name = reader["last_name"].ToString(),
+                            correo = reader["correo"].ToString(),
+                            gender = reader["gender"].ToString()[0],
+                            birth_date = reader["birth_date"].ToString(),
+                            hire_date = reader["hire_date"].ToString(),
+                            is_active = (bool)reader["is_active"]
+                        };
+                            
+                    }
+                }
+                if (emp == null)
+                    TempData["Error"] = "Empleado no encontrado.";
+            }
+            catch (SqlException ex)
+            {
+                TempData["Error"] = ex.Message;
+            }
+            return View(emp);
+        }
+
+        [HttpPost]
+        public ActionResult EditarEmpleado(Empleados emp)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(emp);
+            }
+
+            try
+            {
+                using ( SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["Cnn"].ConnectionString ))
+                {
+                    SqlCommand cmd = new SqlCommand("sp_UpdateEmployee", conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("emp_no", emp.emp_no);
+                    cmd.Parameters.AddWithValue("ci", emp.ci);
+                    cmd.Parameters.AddWithValue("first_name", emp.first_name);
+                    cmd.Parameters.AddWithValue("last_name", emp.last_name);
+                    cmd.Parameters.AddWithValue("correo", emp.correo);
+                    cmd.Parameters.AddWithValue("gender", emp.gender);
+                    cmd.Parameters.AddWithValue("birth_date", emp.birth_date);
+                    conn.Open();    
+                    cmd.ExecuteNonQuery();
+
+                    conn.Close();
+                }
+
+                TempData["Mensaje"] = "Empleado actualizado correctamente";
+                return RedirectToAction("Index");
+            }
+            catch (SqlException ex)
+            {
+                TempData["Error"] = $"Error al actualizar a empleado: {ex.Message}";
+                return View(emp);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Error al actualizar a empleado: {ex.Message}";
+                return View(emp);
+            }
+        }
+
 
     }
 }
