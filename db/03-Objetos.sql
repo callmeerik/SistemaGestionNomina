@@ -408,3 +408,17 @@ BEGIN
     END
 END
 GO
+
+-- Procedure para actualizar estado de empleado
+CREATE PROCEDURE sp_updateEmployeeState
+    @emp_no INT,
+    @is_active BIT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE employees
+    SET is_active = @is_active
+    WHERE emp_no = @emp_no;
+END
+Go
