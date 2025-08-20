@@ -16,6 +16,7 @@ namespace SistemaGestionNomina.Models
         public string hire_date { get; set; }
         public string correo {  get; set; }
         public bool is_active { get; set; } = true;
+        public string clave { get; set; } // clave de usuario
 
     }
 }

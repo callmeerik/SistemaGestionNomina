@@ -164,15 +164,14 @@ namespace SistemaGestionNomina.Controllers
             {
                 using ( SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["Cnn"].ConnectionString ))
                 {
-                    SqlCommand cmd = new SqlCommand("sp_UpdateEmployee", conn);
+                    SqlCommand cmd = new SqlCommand("sp_updateEmployeePassword", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("emp_no", emp.emp_no);
-                    cmd.Parameters.AddWithValue("ci", emp.ci);
                     cmd.Parameters.AddWithValue("first_name", emp.first_name);
                     cmd.Parameters.AddWithValue("last_name", emp.last_name);
                     cmd.Parameters.AddWithValue("correo", emp.correo);
                     cmd.Parameters.AddWithValue("gender", emp.gender);
-                    cmd.Parameters.AddWithValue("birth_date", emp.birth_date);
+                    cmd.Parameters.AddWithValue("clave", emp.clave);
                     conn.Open();    
                     cmd.ExecuteNonQuery();
 
@@ -191,6 +190,46 @@ namespace SistemaGestionNomina.Controllers
             {
                 TempData["Error"] = $"Error al actualizar a empleado: {ex.Message}";
                 return View(emp);
+            }
+        }
+
+        //Creacion de empleados y usuarios
+        [HttpGet]
+        public ActionResult CrearEmpleado()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult CrearEmpleado(Empleados emp)
+        {
+            string mensaje = "";
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["Cnn"].ConnectionString))
+                {
+                    SqlCommand cmd = new SqlCommand("sp_insertEmployee", conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("ci", emp.ci);
+                    cmd.Parameters.AddWithValue("first_name", emp.first_name);
+                    cmd.Parameters.AddWithValue("last_name", emp.last_name);
+                    cmd.Parameters.AddWithValue("birth_date", emp.birth_date);
+                    cmd.Parameters.AddWithValue("gender", emp.gender);
+                    cmd.Parameters.AddWithValue("correo", emp.correo);
+                    cmd.Parameters.AddWithValue("clave", emp.clave);
+                    cmd.Parameters.Add("mensaje", SqlDbType.VarChar, 100).Direction = ParameterDirection.Output;
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                    mensaje = cmd.Parameters["mensaje"].Value.ToString();
+                    conn.Close();
+                    TempData["Mensaje"] = mensaje;
+                    return RedirectToAction("Index", "Empleados");
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return View();
             }
         }
 
