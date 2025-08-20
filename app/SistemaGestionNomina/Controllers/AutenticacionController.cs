@@ -81,23 +81,46 @@ namespace SistemaGestionNomina.Controllers
 
         // POST: Autenticacion/Register
         [HttpPost]
-        public ActionResult Register(string usuario, string clave, string rol = "user")
+        public ActionResult Register(Empleados emp)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(emp); // Si falla la validación, se queda en la misma vista
+            }
+
+            string mensaje = string.Empty;
+
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                string sql = "INSERT INTO users (usuario, clave, rol) VALUES (@usuario, @clave, @rol)";
-                using (SqlCommand cmd = new SqlCommand(sql, con))
+                using (SqlCommand cmd = new SqlCommand("sp_insertEmployee", con))
                 {
-                    cmd.Parameters.AddWithValue("@usuario", usuario);
-                    cmd.Parameters.AddWithValue("@clave", clave);
-                    cmd.Parameters.AddWithValue("@rol", rol);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@ci", emp.ci);
+                    cmd.Parameters.AddWithValue("@birth_date", emp.birth_date);
+                    cmd.Parameters.AddWithValue("@first_name", emp.first_name);
+                    cmd.Parameters.AddWithValue("@last_name", emp.last_name);
+                    cmd.Parameters.AddWithValue("@correo", emp.correo);
+                    cmd.Parameters.AddWithValue("@gender", emp.gender);
+                    cmd.Parameters.AddWithValue("@clave", emp.clave);
+
+                    SqlParameter outputParam = new SqlParameter("@mensaje", SqlDbType.NVarChar, 200);
+                    outputParam.Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add(outputParam);
 
                     con.Open();
                     cmd.ExecuteNonQuery();
+                    con.Close();
+
+                    mensaje = outputParam.Value?.ToString();
                 }
             }
 
-            return RedirectToAction("Login");
+            ViewBag.Mensaje = mensaje;
+
+            if (mensaje == "Empleado y usuario registrados correctamente.")
+                return RedirectToAction("Login");
+
+            return View(emp);
         }
 
         // GET: Autenticacion/AdminPanel
