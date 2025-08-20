@@ -281,15 +281,38 @@ BEGIN
         RETURN;
     END;
 
+    -- Validar que el empleado sea mayor de 18 años
+    DECLARE @edad INT;
+    DECLARE @fecha_nacimiento DATE;
+
+    -- Convertir la fecha de nacimiento de VARCHAR a DATE
+    -- Usamos el formato 103 (dd/mm/yyyy) para la conversión
+    SET @fecha_nacimiento = CONVERT(DATE, @birth_date, 103);
+    
+    -- Calcular la edad
+    SET @edad = DATEDIFF(yy, @fecha_nacimiento, GETDATE());
+
+    -- Ajustar la edad si el cumpleaños no ha pasado este año
+    IF (MONTH(@fecha_nacimiento) > MONTH(GETDATE())) OR (MONTH(@fecha_nacimiento) = MONTH(GETDATE()) AND DAY(@fecha_nacimiento) > DAY(GETDATE()))
+    BEGIN
+        SET @edad = @edad - 1;
+    END;
+
+    IF @edad < 18
+    BEGIN
+        SET @mensaje = 'El empleado debe ser mayor de 18 años.';
+        RETURN;
+    END;
+
     -- Inserción de empleado
     INSERT INTO employees (ci, birth_date, first_name, last_name, gender, hire_date, correo)
     VALUES (
         @ci,
-        @birth_date,
+        @birth_date, -- Mantienes el formato original
         @first_name,
         @last_name,
         @gender,
-        CONVERT(VARCHAR(100), GETDATE(), 103),
+        GETDATE(), -- Usar GETDATE() directamente para la fecha de contratación
         @correo
     );
 
@@ -308,7 +331,6 @@ BEGIN
     SET @mensaje = 'Empleado y usuario registrados correctamente.';
 END;
 GO
-
 declare @mensaje varchar(100)
 exec sp_insertEmployee '1245763307', '12/09/2001', 'Roberto', 'Borja', 
 				'robert@correo.com', 'M', 'rovert3', @mensaje output
@@ -376,12 +398,9 @@ GO
 -- SQP para actualizar datos del empleado
 CREATE OR ALTER PROCEDURE sp_updateEmployeePassword
     @emp_no INT,
-    @ci VARCHAR(10),
     @first_name VARCHAR(50),
     @last_name VARCHAR(50),
     @gender CHAR(1),
-    @birth_date VARCHAR(20),
-    @hire_date varchar(20),
     @correo VARCHAR(100),
     @clave VARCHAR(50) = NULL -- parámetro opcional
 AS
@@ -389,12 +408,9 @@ BEGIN
     -- Actualizar datos del empleado
     UPDATE employees
     SET 
-        ci = @ci,
         first_name = @first_name,
         last_name = @last_name,
         gender = @gender,
-        birth_date = @birth_date,
-        hire_date = @hire_date,
         correo = @correo
     WHERE emp_no = @emp_no;
 
@@ -431,24 +447,8 @@ BEGIN
 END
 GO
 
---- procedure para actualizar datos del empleado
-CREATE OR ALTER PROCEDURE sp_UpdateEmployee
-    @emp_no INT,
-    @ci VARCHAR(10),
-    @first_name VARCHAR(50),
-    @last_name VARCHAR(50),
-    @correo VARCHAR(100),
-    @gender CHAR(1),
-    @birth_date VARCHAR(20)
-AS
-BEGIN
-    UPDATE employees
-    SET ci = @ci,
-        first_name = @first_name,
-        last_name = @last_name,
-        correo = @correo,
-        gender = @gender,
-        birth_date = @birth_date
-    WHERE emp_no = @emp_no;
-END
-GO
+
+
+
+
+select * from employees
