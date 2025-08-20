@@ -516,3 +516,130 @@ BEGIN
         (SELECT AVG(salary) FROM salaries WHERE to_date IS NULL) AS PromedioSalarioVigente;
 END;
 GO
+
+
+
+
+
+/*
+PROCEDUREs Departamentos
+
+*/
+
+
+
+CREATE OR ALTER PROCEDURE sp_insertDeparment
+@nombreDepar varchar(50)
+AS
+BEGIN
+	--Validación si ya existe departamento con el mismo nombre
+	IF  EXISTS(SELECT 1 FROM dbo.departments WHERE dept_name = @nombreDepar)
+	BEGIN
+	RAISERROR(N'El departamento ya existe.',16,1);
+	RETURN;
+	END
+
+	INSERT INTO departments (dept_name) VALUES
+	(@nombreDepar)
+END
+GO
+
+/*
+--EXEC sp_insertDeparment 'Prueba'
+--GO
+*/
+
+
+CREATE OR ALTER PROCEDURE sp_getDeparments
+AS
+BEGIN
+	SELECT  dept_no AS Id, dept_name AS Departamento FROM departments
+END
+GO
+
+EXEC sp_getDeparments
+
+
+CREATE OR ALTER PROCEDURE sp_getDept_manager
+AS
+BEGIN
+SELECT  e.emp_no AS Id,
+        e.ci AS CI,
+        e.birth_date AS F_Nacimiento,
+        CONCAT(e.first_name, ' ', e.last_name) AS Nombres,
+        e.hire_date AS F_Ingreso,
+        s.dept_name AS Departamento,
+		d.from_date AS Desde,
+		d.to_date AS Hasta
+     
+FROM employees   e
+JOIN dept_emp    d ON e.emp_no  = d.emp_no
+JOIN departments s ON d.dept_no = s.dept_no;
+END
+GO
+
+EXEC sp_getDept_manager
+
+
+--- busca el empleado al que se le va a realizar la actualizacion de departamento
+
+CREATE OR ALTER PROCEDURE sp_getAsigDepartEmpl
+@ci varchar(50)
+AS
+BEGIN
+	--Validación si ya existe departamento con el mismo nombre
+	IF  NOT EXISTS(SELECT 1 FROM dbo.employees WHERE ci = @ci)
+	BEGIN
+	RAISERROR(N'No existe empleado con ese número de cédula.',16,1);
+	RETURN;
+	END
+
+
+SELECT  e.emp_no AS Id,
+        e.ci AS CI,
+        CONCAT(e.first_name, ' ', e.last_name) AS Nombres,
+		d.dept_no AS Id_Departamento,
+		s.dept_name AS Departamento,
+		d.from_date AS Desde,
+		d.to_date AS Hasta
+     
+FROM employees   e
+JOIN dept_emp    d ON e.emp_no  = d.emp_no 
+JOIN departments s ON d.dept_no = s.dept_no WHERE e.ci = @ci;
+
+END
+GO
+
+EXEC sp_getAsigDepartEmpl '1708913678'
+GO
+
+
+---Realiza la modificacion del departamento del empleado y agrega nuevo registro a la tabla dept_emp-------
+CREATE OR ALTER PROCEDURE sp_setAsigDepartEmpl
+@emp_no int,
+@dept_no int,
+@dept_no_nuevo int
+
+AS
+BEGIN
+
+    IF @dept_no = @dept_no_nuevo
+    BEGIN
+        RAISERROR('El departamento nuevo es igual al actual.', 16, 1);
+        RETURN;
+    END
+	--DECLARE @hoy DATE = CAST(GETDATE() AS DATE);
+	DECLARE @hoy VARCHAR(50) = CONVERT(varchar(10), GETDATE(), 103); -- formato dd/mm/yyyy
+
+
+	--- Actualizacion de regitro to_date en registro actual
+    UPDATE dept_emp SET to_date = @hoy WHERE emp_no = @emp_no
+       AND dept_no = @dept_no AND to_date = NULL; -- Sera NULL
+     
+    -- Agregar nuevo registro con to_date = NULL
+    INSERT INTO dept_emp (emp_no, dept_no, from_date, to_date)
+    VALUES (@emp_no, @dept_no_nuevo, @hoy, NULL); -- Sera NULL
+
+END
+GO
+

@@ -5,10 +5,12 @@ de BBDD nominaDB
 
 USE nominaDB
 GO
-
+/*
 --===========================
 -- Inserci�n de Datos
 --==========================?
+*/
+
 INSERT INTO departments (dept_name) 
 VALUES
 	('Finanzas'), 
