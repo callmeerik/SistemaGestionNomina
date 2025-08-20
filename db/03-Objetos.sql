@@ -179,7 +179,7 @@ AS
 		set @salary = (SELECT salary FROM inserted)
 
 		-- insertar datos en la tabla de auditoria de salarios
-		INSERT INTO log_auditorySalary (username, update_date, change_detail, salary, emp_no)
+		INSERT INTO Log_AuditoriaSalarios(usuario, fecha_actualizacion, detalle_cambio, salario, emp_no)
 		VALUES
 			(SUSER_SNAME(), GETDATE(), 'Nuevo empleado', @salary, @emp_no)
 	END
@@ -202,9 +202,9 @@ VALUES
   (31, 1700, getdate(), '2050-12-31')
 
 select * from salaries where emp_no = 31
-select * from log_auditorySalary
+select * from Log_AuditoriaSalarios
 Go
-
+use nominaDB
 
 -- Procedure para Autenticacion de usuarios
 -- Procedure de autenticacion
@@ -452,3 +452,5 @@ GO
 
 
 select * from employees
+
+select * from users
