@@ -31,7 +31,7 @@ CREATE TABLE employees(
     first_name  VARCHAR(50) NOT NULL,
     last_name   VARCHAR(50) NOT NULL,
     gender      CHAR(1) NOT NULL,
-    hire_date   VARCHAR(50)    NOT NULL,
+    hire_date   DATE    NOT NULL,
     correo      VARCHAR(120) NOT NULL,
     is_active   BIT     DEFAULT 1
 )
