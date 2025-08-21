@@ -1,0 +1,55 @@
+﻿@model SistemaGestionNomina.Models.Empleados
+
+@{
+    ViewBag.Title = "Registro de Usuario";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Registro de Usuario</h2>
+
+@using (Html.BeginForm("Register", "Autenticacion", FormMethod.Post))
+{
+    <div>
+        <label>Cédula:</label>
+        @Html.TextBoxFor(m => m.ci, new { placeholder = "Ingrese su cédula" })
+        @Html.ValidationMessageFor(m => m.ci)
+    </div>
+    <div>
+        <label>Fecha de nacimiento:</label>
+        @Html.TextBoxFor(m => m.birth_date, new { placeholder = "YYYY-MM-DD" })
+        @Html.ValidationMessageFor(m => m.birth_date)
+    </div>
+    <div>
+        <label>Nombre:</label>
+        @Html.TextBoxFor(m => m.first_name, new { placeholder = "Ingrese su nombre" })
+        @Html.ValidationMessageFor(m => m.first_name)
+    </div>
+    <div>
+        <label>Apellido:</label>
+        @Html.TextBoxFor(m => m.last_name, new { placeholder = "Ingrese su apellido" })
+        @Html.ValidationMessageFor(m => m.last_name)
+    </div>
+    <div>
+        <label>Correo:</label>
+        @Html.TextBoxFor(m => m.correo, new { placeholder = "Ingrese su correo" })
+        @Html.ValidationMessageFor(m => m.correo)
+    </div>
+    <div>
+        <label>Género (M/F):</label>
+        @Html.TextBoxFor(m => m.gender, new { placeholder = "M o F", maxlength = "1" })
+        @Html.ValidationMessageFor(m => m.gender)
+    </div>
+    <div>
+        <label>Contraseña:</label>
+        @Html.PasswordFor(m => m.clave, new { placeholder = "Ingrese su contraseña" })
+        @Html.ValidationMessageFor(m => m.clave)
+    </div>
+    <div>
+        <button type="submit">Registrarse</button>
+    </div>
+}
+
+@if (ViewBag.Mensaje != null)
+{
+    <p style="color:green;">@ViewBag.Mensaje</p>
+}
