@@ -1,105 +1,137 @@
-﻿/*
-	Este documento tiene los scripts de SQL para
-	la creacion de la base de datos nominaDB t la
-	creacion de tablas
+﻿﻿/*
+    Este documento tiene los scripts de SQL para
+    la creación de la base de datos nominaDB y la
+    creación de tablas
 */
 
 CREATE DATABASE nominaDB
-Go
+GO
 
 USE nominaDB
-Go
+GO
 
 
 --=========================================
---	CREACI�N DE TABLAS
+--  CREACIÓN DE TABLAS
 --=========================================
+
 -- Tabla departments
 CREATE TABLE departments(
-	dept_no		INT		PRIMARY KEY		IDENTITY(1, 1),
-	dept_name	VARCHAR(50)		NOT NULL,
-	is_active   BIT				DEFAULT 1
+    dept_no     INT     PRIMARY KEY IDENTITY(1, 1),
+    dept_name   VARCHAR(50) NOT NULL,
+    is_active   BIT     DEFAULT 1
 )
-Go
+GO
 
 -- Tabla employees
 CREATE TABLE employees(
-	emp_no		INT		PRIMARY KEY		IDENTITY(1, 1),
-	ci			VARCHAR(50)		NOT NULL,
-	birth_date	VARCHAR(50)		NOT NULL,
-	first_name	VARCHAR(50)		NOT NULL,
-	last_name	VARCHAR(50)		NOT NULL,
-	gender		CHAR(1)			NOT NULL,
-	hire_date	VARCHAR(50)		NOT NULL,
-	correo		VARCHAR(120)	NOT NULL,
-	is_active   BIT				DEFAULT 1
+    emp_no      INT     PRIMARY KEY IDENTITY(1, 1),
+    ci          VARCHAR(50) NOT NULL,
+    birth_date  DATE    NOT NULL,
+    first_name  VARCHAR(50) NOT NULL,
+    last_name   VARCHAR(50) NOT NULL,
+    gender      CHAR(1) NOT NULL,
+    hire_date   DATE    NOT NULL,
+    correo      VARCHAR(120) NOT NULL,
+    is_active   BIT     DEFAULT 1
 )
-Go
+GO
 
 -- Tabla dept_manager
 CREATE TABLE dept_manager(
-	emp_no		INT				NOT NULL,
-	dept_no		INT				NOT NULL,
-	from_date	VARCHAR(50)		NOT NULL,
-	to_date		VARCHAR(50)		NULL,
-	PRIMARY KEY	(emp_no, dept_no),
-	FOREIGN KEY (emp_no) REFERENCES employees (emp_no),
-	FOREIGN KEY (dept_no) REFERENCES departments (dept_no)
+    emp_no      INT     NOT NULL,
+    dept_no     INT     NOT NULL,
+    from_date   DATE    NOT NULL,
+    to_date     DATE    NULL,
+    PRIMARY KEY (emp_no, dept_no),
+    FOREIGN KEY (emp_no) REFERENCES employees(emp_no),
+    FOREIGN KEY (dept_no) REFERENCES departments(dept_no)
 )
-Go
-
+GO
 
 -- Tabla dept_emp
 CREATE TABLE dept_emp(
-	emp_no		INT				NOT NULL,
-	dept_no		INT				NOT NULL,
-	from_date	VARCHAR(50)		NOT NULL,
-	to_date		VARCHAR(50)		NULL,
-	PRIMARY KEY (emp_no, dept_no),
-	FOREIGN KEY (emp_no) REFERENCES employees (emp_no),
-	FOREIGN KEY (dept_no) REFERENCES departments (dept_no)
+    emp_no      INT     NOT NULL,
+    dept_no     INT     NOT NULL,
+    from_date   DATE    NOT NULL,
+    to_date     DATE    NULL,
+    PRIMARY KEY (emp_no, dept_no),
+    FOREIGN KEY (emp_no) REFERENCES employees(emp_no),
+    FOREIGN KEY (dept_no) REFERENCES departments(dept_no)
 )
-Go
+GO
 
--- Table titles (cargos)
+-- Tabla titles (cargos)
 CREATE TABLE titles(
-	emp_no		INT				NOT NULL,
-	title		VARCHAR(50)		NOT NULL,
-	from_date	VARCHAR(50)		NOT NULL,
-	to_date		VARCHAR(50)		NULL, -- si es nulo cargo vigente
-	PRIMARY KEY (emp_no, title, from_date),
-	FOREIGN KEY (emp_no) REFERENCES employees (emp_no)
+    emp_no      INT     NOT NULL,
+    title       VARCHAR(50) NOT NULL,
+    from_date   DATE    NOT NULL,
+    to_date     DATE    NULL, -- si es nulo, cargo vigente
+    PRIMARY KEY (emp_no, title, from_date),
+    FOREIGN KEY (emp_no) REFERENCES employees(emp_no)
 )
-Go
+GO
 
 -- Tabla salaries
 CREATE TABLE salaries(
-	emp_no		INT			NOT NULL,
-	salary		BIGINT		NOT NULL,
-	from_date	VARCHAR(50)	NOT NULL,
-	to_date		VARCHAR(50) NULL,
-	PRIMARY KEY (emp_no, from_date),
-	FOREIGN KEY (emp_no) REFERENCES employees (emp_no)
-)
-Go
-
-CREATE TABLE users(
-	emp_no int not null,
-	usuario varchar(150) not null,
-	clave varchar(20) not null,
-	rol VARCHAR (30),
-	primary key (emp_no),
-	FOREIGN KEY (emp_no) REFERENCES employees (emp_no)
-)
-Go
-
-CREATE TABLE Log_AuditoriaSalarios(
-	id int identity(1, 1) primary key,
-	usuario varchar(50) not null,
-	fecha_actualizacion date not null,
-	detalle_cambio varchar(250) not null,
-	salario bigint not null,
-	emp_no int not null,
-	FOREIGN KEY (emp_no) REFERENCES employees(emp_no)
+    emp_no      INT     NOT NULL,
+    salary      BIGINT  NOT NULL,
+    from_date   DATE    NOT NULL,
+    to_date     DATE    NULL,
+    PRIMARY KEY (emp_no, from_date),
+    FOREIGN KEY (emp_no) REFERENCES employees(emp_no)
 )
 GO
+
+-- Tabla users
+CREATE TABLE users(
+    emp_no      INT     NOT NULL,
+    usuario     VARCHAR(150) NOT NULL,
+    clave       VARCHAR(64) NOT NULL,
+    rol         VARCHAR(30) NOT NULL DEFAULT 'RRHH',
+    PRIMARY KEY (emp_no),
+    FOREIGN KEY (emp_no) REFERENCES employees(emp_no)
+)
+GO
+
+-- Tabla Log_AuditoriaSalarios
+CREATE TABLE Log_AuditoriaSalarios(
+    id                  INT IDENTITY(1, 1) PRIMARY KEY,
+    usuario             VARCHAR(50) NOT NULL,
+    fecha_actualizacion DATE NOT NULL,
+    detalle_cambio      VARCHAR(250) NOT NULL,
+    salario             BIGINT NOT NULL,
+    emp_no              INT NOT NULL,
+    FOREIGN KEY (emp_no) REFERENCES employees(emp_no)
+)
+GO
+
+
+/*-- Desactivar temporalmente las FK para borrar todo sin errores
+ALTER TABLE dept_emp NOCHECK CONSTRAINT ALL;
+ALTER TABLE dept_manager NOCHECK CONSTRAINT ALL;
+ALTER TABLE salaries NOCHECK CONSTRAINT ALL;
+ALTER TABLE titles NOCHECK CONSTRAINT ALL;
+ALTER TABLE users NOCHECK CONSTRAINT ALL;
+
+-- Borrar datos
+DELETE FROM Log_AuditoriaSalarios;
+DELETE FROM users;
+DELETE FROM salaries;
+DELETE FROM titles;
+DELETE FROM dept_emp;
+DELETE FROM dept_manager;
+DELETE FROM employees;
+DELETE FROM departments;
+
+-- Reactivar constraints
+ALTER TABLE dept_emp CHECK CONSTRAINT ALL;
+ALTER TABLE dept_manager CHECK CONSTRAINT ALL;
+ALTER TABLE salaries CHECK CONSTRAINT ALL;
+ALTER TABLE titles CHECK CONSTRAINT ALL;
+ALTER TABLE users CHECK CONSTRAINT ALL;
+
+-- Resetear identidades
+--DBCC CHECKIDENT('employees', RESEED, 0);
+--DBCC CHECKIDENT('departments', RESEED, 0);
+*/
