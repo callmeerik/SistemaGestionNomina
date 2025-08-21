@@ -33,7 +33,7 @@ namespace SistemaGestionNomina.Models
         public string gender { get; set; }
 
         [Required]
-        [StringLength(12)]
+        [StringLength(64)]
         [DataType(DataType.Password)]
         public string clave { get; set; }
     }

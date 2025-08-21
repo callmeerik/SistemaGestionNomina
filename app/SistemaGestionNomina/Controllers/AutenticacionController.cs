@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Security.Cryptography;
+using System.Text;
 using System.Web.Mvc;
 
 namespace SistemaGestionNomina.Controllers
@@ -28,6 +29,9 @@ namespace SistemaGestionNomina.Controllers
                 DataTable dt = new DataTable();
                 string mensaje = string.Empty;
 
+                // 🔒 Encriptar la clave ANTES de enviarla al SP
+                string hashedPassword = HashPassword(user.clave);
+
                 using (SqlConnection cn = new SqlConnection(connectionString))
                 {
                     SqlCommand cmd = new SqlCommand("sp_userAuthentication", cn);
@@ -35,7 +39,9 @@ namespace SistemaGestionNomina.Controllers
 
                     // Parámetros de entrada
                     cmd.Parameters.AddWithValue("@usuario", user.usuario);
-                    cmd.Parameters.AddWithValue("@clave", user.clave);
+                    //cmd.Parameters.AddWithValue("@clave", user.clave);
+                    // En Login
+                    cmd.Parameters.AddWithValue("@clave", hashedPassword);
 
                     // Parámetro de salida
                     SqlParameter outputParam = new SqlParameter("@message", SqlDbType.NVarChar, 100);
@@ -90,6 +96,10 @@ namespace SistemaGestionNomina.Controllers
 
             string mensaje = string.Empty;
 
+            // 🔒 Encriptar clave antes de guardar
+            string hashedPassword = HashPassword(emp.clave);
+
+
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 using (SqlCommand cmd = new SqlCommand("sp_insertEmployee", con))
@@ -101,7 +111,9 @@ namespace SistemaGestionNomina.Controllers
                     cmd.Parameters.AddWithValue("@last_name", emp.last_name);
                     cmd.Parameters.AddWithValue("@correo", emp.correo);
                     cmd.Parameters.AddWithValue("@gender", emp.gender);
-                    cmd.Parameters.AddWithValue("@clave", emp.clave);
+                    //cmd.Parameters.AddWithValue("@clave", emp.clave);
+                    // En Login
+                    cmd.Parameters.AddWithValue("@clave", hashedPassword);
 
                     SqlParameter outputParam = new SqlParameter("@mensaje", SqlDbType.NVarChar, 200);
                     outputParam.Direction = ParameterDirection.Output;
@@ -142,6 +154,23 @@ namespace SistemaGestionNomina.Controllers
 
             // Redirigir al login
             return RedirectToAction("Login", "Autenticacion");
+        }
+
+        // ============================
+        // 🔐 Método para encriptar clave
+        // ============================
+        private string HashPassword(string password)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                StringBuilder builder = new StringBuilder();
+                foreach (var b in bytes)
+                {
+                    builder.Append(b.ToString("x2"));
+                }
+                return builder.ToString();
+            }
         }
 
     }

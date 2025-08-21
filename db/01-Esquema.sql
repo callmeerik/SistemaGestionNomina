@@ -10,6 +10,7 @@ GO
 USE nominaDB
 GO
 
+
 --=========================================
 --  CREACIÓN DE TABLAS
 --=========================================
@@ -86,7 +87,7 @@ GO
 CREATE TABLE users(
     emp_no      INT     NOT NULL,
     usuario     VARCHAR(150) NOT NULL,
-    clave       VARCHAR(20) NOT NULL,
+    clave       VARCHAR(64) NOT NULL,
     rol         VARCHAR(30) NOT NULL DEFAULT 'user',
     PRIMARY KEY (emp_no),
     FOREIGN KEY (emp_no) REFERENCES employees(emp_no)
