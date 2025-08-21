@@ -13,7 +13,7 @@
 <body>
     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
         <div class="container">
-            @Html.ActionLink("Nombre de la aplicación", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            @Html.ActionLink("Sistema de Gestion de Nomina", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Alternar navegación" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -21,13 +21,26 @@
             <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
                     <li>@Html.ActionLink("Inicio", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
 
-                    @* Solo se muestra Contact si el usuario es Admin *@
-                    @if (Session["UserRole"] != null && Session["UserRole"].ToString() == "user")
+                    @if (Session["UserRole"] != null)
                     {
-                        <li>@Html.ActionLink("Contacto", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                        <li>@Html.ActionLink("Administrar Usuarios", "Index", "Users", new { area = "" }, new { @class = "nav-link" })</li>
+                        if (Session["UserRole"].ToString() == "Admin")
+
+                        {
+
+                            // Aqui agregar lo que hace falta para Admin
+                            <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                            <li>@Html.ActionLink("Administrar Usuarios", "Index", "Users", new { area = "" }, new { @class = "nav-link" })</li>
+                        }
+                        if (Session["UserRole"].ToString() == "RRHH")
+                        {
+                            // Aqui agregar lo que hace falta para RRHH
+                            <li>@Html.ActionLink("Empleados", "Listado", "Empleados", new { area = "" }, new { @class = "nav-link" })</li>
+                            <li>@Html.ActionLink("Departamentos", "", "Departamentos", new { area = "" }, new { @class = "nav-link" })</li>
+                            <li>@Html.ActionLink("Cargos", "", "Cargos", new { area = "" }, new { @class = "nav-link" })</li>
+                            <li>@Html.ActionLink("Salarios", "", "Salarios", new { area = "" }, new { @class = "nav-link" })</li>
+                            <li>@Html.ActionLink("Reportes", "", "Reportes", new { area = "" }, new { @class = "nav-link" })</li>
+                        }
                     }
                 </ul>
 
@@ -37,17 +50,17 @@
                         <li class="nav-item">
                             <span class="nav-link text-white">Hola, @Session["UserName"] (@Session["UserRole"])</span>
                         </li>
-                        <li>@Html.ActionLink("Cerrar Sesión", "Logout", "Authentication", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("Cerrar Sesión", "Logout", "Autenticacion", new { area = "" }, new { @class = "nav-link" })</li>
                     }
                     else
                     {
                         <li>@Html.ActionLink("Login", "Login", "Autenticacion", new { area = "" }, new { @class = "nav-link" })</li>
                         <li>@Html.ActionLink("Registrarse", "Register", "Autenticacion", new { area = "" }, new { @class = "nav-link" })</li>
-                        <li>@Html.ActionLink("Cerrar Sesión", "Logout", "Autenticacion", new { area = "" }, new { @class = "nav-link" })</li>
-
                     }
                 </ul>
             </div>
+
+
         </div>
     </nav>
 

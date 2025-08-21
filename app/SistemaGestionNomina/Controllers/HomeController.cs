@@ -22,8 +22,7 @@ namespace SistemaGestionNomina.Controllers
             return View();
         }
 
-
-        [AuthorizeRole("user")]
+        [AuthorizeRole("Admin","User")]
         public ActionResult Contact()
         {
             ViewBag.Message = "Your contact page.";

@@ -423,11 +423,11 @@ GO
 
 
 
--- Creacio 
+-- Store procedure para Login
 -- CREACION DE AUTENTICACION
 CREATE OR ALTER PROCEDURE sp_userAuthentication
     @usuario nvarchar(50),
-    @clave nvarchar(50),
+    @clave nvarchar(64),
     @message nvarchar(100) OUTPUT
 AS
 BEGIN
@@ -478,19 +478,20 @@ EXEC sp_userAuthentication
 
 SELECT @mensajeSalida AS Resultado;
 
+-- Store procedure para Registro
 
 
---==========================================
--- Procedure ingresar empleado y usuarios
---==========================================
+USE nominaDB
+GO
+
 CREATE OR ALTER PROCEDURE sp_insertEmployee
-    @ci varchar(10),
-    @birth_date varchar(20),
-    @first_name varchar(50),
-    @last_name varchar(50),
-    @correo varchar(100),
-    @gender char(1),
-    @clave varchar(12),
+    @ci VARCHAR(10),
+    @birth_date DATE,           -- Cambiado a DATE
+    @first_name VARCHAR(50),
+    @last_name VARCHAR(50),
+    @correo VARCHAR(100),
+    @gender CHAR(1),
+    @clave VARCHAR(64),
     @mensaje NVARCHAR(200) OUTPUT
 AS
 BEGIN
@@ -518,7 +519,7 @@ BEGIN
         @first_name,
         @last_name,
         @gender,
-        CONVERT(VARCHAR(100), GETDATE(), 103),
+        GETDATE(),     -- Fecha actual como DATE
         @correo
     );
 
@@ -538,9 +539,17 @@ BEGIN
 END;
 GO
 
-declare @mensaje varchar(100)
-exec sp_insertEmployee '1245763307', '2001-09-12', 'Roberto', 'Borja', 
-				'roberst@correo.com', 'M', 'usu2030', @mensaje output
-select @mensaje
+-- Ejemplo de ejecución
+DECLARE @mensajeSalida NVARCHAR(200);
 
+EXEC sp_insertEmployee 
+    @ci = '1212363307', 
+    @birth_date = '2001-09-12',  -- Ya como DATE
+    @first_name = 'Roberto', 
+    @last_name = 'Borja', 
+    @correo = 'robesdarasfdst@correo.com', 
+    @gender = 'M', 
+    @clave = 'usu2asfdsasfafasfasdsafsad030', 
+    @mensaje = @mensajeSalida OUTPUT;
 
+SELECT @mensajeSalida AS Resultado;

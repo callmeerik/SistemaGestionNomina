@@ -203,6 +203,5 @@ Select * from Log_AuditoriaSalarios
 Select * from salaries
 Select * from titles
 Select * from users
-
-*/
 Select * from users
+*/

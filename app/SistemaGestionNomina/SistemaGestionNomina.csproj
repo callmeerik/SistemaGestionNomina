@@ -195,7 +195,6 @@
     <Folder Include="App_Data\" />
     <Folder Include="Views\Cargos\" />
     <Folder Include="Views\Departamentos\" />
-    <Folder Include="Views\Empleados\" />
     <Folder Include="Views\Salarios\" />
   </ItemGroup>
   <ItemGroup>

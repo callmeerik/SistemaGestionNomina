@@ -17,7 +17,7 @@ namespace SistemaGestionNomina.Filters
 
         protected override bool AuthorizeCore(HttpContextBase httpContext)
         {
-            var rol = httpContext.Session["Rol"]?.ToString();
+            var rol = httpContext.Session["UserRole"]?.ToString();
             return rol != null && allowedRoles.Contains(rol);
         }
 

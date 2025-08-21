@@ -88,7 +88,7 @@ CREATE TABLE users(
     emp_no      INT     NOT NULL,
     usuario     VARCHAR(150) NOT NULL,
     clave       VARCHAR(64) NOT NULL,
-    rol         VARCHAR(30) NOT NULL DEFAULT 'user',
+    rol         VARCHAR(30) NOT NULL DEFAULT 'RRHH',
     PRIMARY KEY (emp_no),
     FOREIGN KEY (emp_no) REFERENCES employees(emp_no)
 )
