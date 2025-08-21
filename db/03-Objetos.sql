@@ -205,7 +205,7 @@ select * from salaries where emp_no = 31
 select * from log_auditorySalary
 Go
 
-
+/*
 -- Procedure para Autenticacion de usuarios
 -- Procedure de autenticacion
 CREATE OR ALTER PROCEDURE sp_userAuthentication
@@ -251,6 +251,9 @@ go
 select * from employees
 go
 
+
+*/
+/*
 --==========================================
 -- Procedure ingresar empleado y usuarios
 --==========================================
@@ -315,6 +318,7 @@ exec sp_insertEmployee '1245763307', '2001-09-12', 'Roberto', 'Borja',
 select @mensaje
 
 go
+*/
 
 -- procedure para lista todos los empleados
 CREATE OR ALTER PROCEDURE sp_getEmployees
