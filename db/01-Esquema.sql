@@ -105,3 +105,32 @@ CREATE TABLE Log_AuditoriaSalarios(
     FOREIGN KEY (emp_no) REFERENCES employees(emp_no)
 )
 GO
+
+
+-- Desactivar temporalmente las FK para borrar todo sin errores
+ALTER TABLE dept_emp NOCHECK CONSTRAINT ALL;
+ALTER TABLE dept_manager NOCHECK CONSTRAINT ALL;
+ALTER TABLE salaries NOCHECK CONSTRAINT ALL;
+ALTER TABLE titles NOCHECK CONSTRAINT ALL;
+ALTER TABLE users NOCHECK CONSTRAINT ALL;
+
+-- Borrar datos
+DELETE FROM Log_AuditoriaSalarios;
+DELETE FROM users;
+DELETE FROM salaries;
+DELETE FROM titles;
+DELETE FROM dept_emp;
+DELETE FROM dept_manager;
+DELETE FROM employees;
+DELETE FROM departments;
+
+-- Reactivar constraints
+ALTER TABLE dept_emp CHECK CONSTRAINT ALL;
+ALTER TABLE dept_manager CHECK CONSTRAINT ALL;
+ALTER TABLE salaries CHECK CONSTRAINT ALL;
+ALTER TABLE titles CHECK CONSTRAINT ALL;
+ALTER TABLE users CHECK CONSTRAINT ALL;
+
+-- Resetear identidades
+--DBCC CHECKIDENT('employees', RESEED, 0);
+--DBCC CHECKIDENT('departments', RESEED, 0);
