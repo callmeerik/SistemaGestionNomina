@@ -53,8 +53,8 @@ GO
 CREATE TABLE dept_emp(
     emp_no      INT     NOT NULL,
     dept_no     INT     NOT NULL,
-    from_date   VARCHAR(50)    NOT NULL,
-    to_date     VARCHAR(50)    NULL,
+    from_date   DATE    NOT NULL,
+    to_date     DATE    NULL,
     PRIMARY KEY (emp_no, dept_no),
     FOREIGN KEY (emp_no) REFERENCES employees(emp_no),
     FOREIGN KEY (dept_no) REFERENCES departments(dept_no)
@@ -65,8 +65,8 @@ GO
 CREATE TABLE titles(
     emp_no      INT     NOT NULL,
     title       VARCHAR(50) NOT NULL,
-    from_date   VARCHAR(50)    NOT NULL,
-    to_date     VARCHAR(50)    NULL, -- si es nulo, cargo vigente
+    from_date   DATE    NOT NULL,
+    to_date     DATE    NULL, -- si es nulo, cargo vigente
     PRIMARY KEY (emp_no, title, from_date),
     FOREIGN KEY (emp_no) REFERENCES employees(emp_no)
 )
@@ -76,8 +76,8 @@ GO
 CREATE TABLE salaries(
     emp_no      INT     NOT NULL,
     salary      BIGINT  NOT NULL,
-    from_date   VARCHAR(50)    NOT NULL,
-    to_date     VARCHAR(50)    NULL,
+    from_date   DATE    NOT NULL,
+    to_date     DATE    NULL,
     PRIMARY KEY (emp_no, from_date),
     FOREIGN KEY (emp_no) REFERENCES employees(emp_no)
 )
