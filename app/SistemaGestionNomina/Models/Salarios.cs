@@ -7,5 +7,10 @@ namespace SistemaGestionNomina.Models
 {
     public class Salarios
     {
+
+         
+
+        public Salarios() { }
+
     }
 }
