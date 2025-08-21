@@ -252,7 +252,7 @@ select * from employees
 go
 
 --==========================================
--- Procedure ingresar empleado y usuarios
+-- PROCEDURES DE EMPLEADOS
 --==========================================
 CREATE OR ALTER PROCEDURE sp_insertEmployee
     @ci varchar(10),
@@ -312,7 +312,7 @@ BEGIN
         @first_name,
         @last_name,
         @gender,
-        GETDATE(), -- Usar GETDATE() directamente para la fecha de contratación
+        CAST(GETDATE() AS DATE), -- Usar GETDATE() directamente para la fecha de contratación
         @correo
     );
 
@@ -335,7 +335,6 @@ declare @mensaje varchar(100)
 exec sp_insertEmployee '1245763307', '12/09/2001', 'Roberto', 'Borja', 
 				'robert@correo.com', 'M', 'rovert3', @mensaje output
 select @mensaje
-
 go
 
 -- procedure para lista todos los empleados
@@ -448,65 +447,12 @@ END
 GO
 
 
--- Procedure para obtener resumen numero d emepleados, deptos y avg salario
-CREATE OR ALTER PROCEDURE sp_getCurrentStaffReportDepartment
-    @dept_name VARCHAR(40),
-    @fecha_inicio_str VARCHAR(10),
-    @mensaje VARCHAR(255) OUTPUT
-AS
-BEGIN
-    SET NOCOUNT ON;
 
-    DECLARE @fecha_inicio DATE;
-
-    -- Intentar convertir la cadena a DATE
-    BEGIN TRY
-        SET @fecha_inicio = CONVERT(DATE, @fecha_inicio_str, 103);
-    END TRY
-    BEGIN CATCH
-        SET @mensaje = 'Error: La fecha debe estar en formato dd/mm/yyyy.';
-        RETURN;
-    END CATCH;
-
-    -- Validar existencia del departamento
-    IF NOT EXISTS (SELECT 1 FROM departments WHERE dept_name = @dept_name)
-    BEGIN
-        SET @mensaje = 'Error: El departamento especificado no existe.';
-        RETURN;
-    END;
-
-    -- Consulta de empleados con salarios y deptos vigentes a partir de la fecha indicada
-    SELECT
-        e.emp_no,
-        e.first_name,
-        e.last_name,
-        s.salary,
-        s.from_date AS salary_from_date,
-        ISNULL(CONVERT(VARCHAR(10), s.to_date, 103), 'Vigente') AS salary_to_date,
-        d.dept_name,
-        de.from_date AS dept_from_date,
-        ISNULL(CONVERT(VARCHAR(10), de.to_date, 103), 'Vigente') AS dept_to_date
-    FROM employees e
-    JOIN salaries s ON e.emp_no = s.emp_no
-    JOIN dept_emp de ON e.emp_no = de.emp_no
-    JOIN departments d ON de.dept_no = d.dept_no
-    WHERE
-        d.dept_name = @dept_name
-        -- Vigencia en el departamento (to_date NULL)
-        AND de.to_date IS NULL
-        -- Solo registros con fecha de inicio igual o mayor a la indicada
-        AND TRY_CONVERT(DATE, s.from_date, 103) >= @fecha_inicio
-    ORDER BY e.last_name, e.first_name;
-
-    SET @mensaje = 'Reporte generado correctamente.';
-END;
-GO
-
-declare @mensaje varchar(100)
-exec sp_getCurrentStaffReportDepartment'Finanzas', '02/01/2017', @mensaje output
-Go
-
-
+/*
+  =================================
+    PROCEDURE PARA PAGINA DE INICIO
+  =================================
+*/
 CREATE OR ALTER PROCEDURE sp_getDashboardMetrics
 AS
 BEGIN
@@ -519,14 +465,11 @@ GO
 
 
 
-
-
 /*
-PROCEDUREs Departamentos
-
+==============================
+    PROCEDUREs Departamentos
+==============================
 */
-
-
 
 CREATE OR ALTER PROCEDURE sp_insertDeparment
 @nombreDepar varchar(50)
