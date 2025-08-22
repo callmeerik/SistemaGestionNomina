@@ -7,6 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - Mi aplicación ASP.NET</title>
+    @RenderSection("styles", required: false)  <!-- Define seccion para que layour lo renderice> -->
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
@@ -37,7 +38,7 @@
                         {
                             // Aqui agregar lo que hace falta para RRHH
                             <li>@Html.ActionLink("Empleados", "Listado", "Empleados", new { area = "" }, new { @class = "nav-link" })</li>
-                            <li>@Html.ActionLink("Departamentos", "", "Departamentos", new { area = "" }, new { @class = "nav-link" })</li>
+                            <li>@Html.ActionLink("Departamentos", "Departamento", "Departamentos", new { area = "" }, new { @class = "nav-link" })</li>
                             <li>@Html.ActionLink("Cargos", "", "Cargos", new { area = "" }, new { @class = "nav-link" })</li>
                             <li>@Html.ActionLink("Salarios", "", "Salarios", new { area = "" }, new { @class = "nav-link" })</li>
                             <li>@Html.ActionLink("Reportes", "", "Reportes", new { area = "" }, new { @class = "nav-link" })</li>
