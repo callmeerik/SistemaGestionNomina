@@ -179,15 +179,15 @@ AS
 		set @salary = (SELECT salary FROM inserted)
 
 		-- insertar datos en la tabla de auditoria de salarios
-		INSERT INTO log_auditorySalary (username, update_date, change_detail, salary, emp_no)
+		INSERT INTO Log_AuditoriaSalarios (usuario, fecha_actualizacion, detalle_cambio, salario, emp_no)
 		VALUES
 			(SUSER_SNAME(), GETDATE(), 'Nuevo empleado', @salary, @emp_no)
 	END
 GO
 
-INSERT INTO employees (ci, birth_date, first_name, last_name, gender, hire_date)
+INSERT INTO employees (ci, birth_date, first_name, last_name, gender, hire_date,correo)
 VALUES
-    ('1708913621', '1998-07-12', 'Daniela', 'Albertoni', 'F', Getdate())
+    ('1708913621', '1998-07-12', 'Daniela', 'Albertoni', 'F', Getdate(),LOWER(TRANSLATE('Erika','ÁÉÍÓÚáéíóúÑñ','AEIOUaeiouNn')) + '.' + LOWER(TRANSLATE('Rubiales','ÁÉÍÓÚáéíóúÑñ','AEIOUaeiouNn')) + '@correo.com')
 
 INSERT INTO dept_emp (emp_no, dept_no, from_date, to_date)
 VALUES
@@ -202,7 +202,7 @@ VALUES
   (31, 1700, getdate(), '2050-12-31')
 
 select * from salaries where emp_no = 31
-select * from log_auditorySalary
+select * from Log_AuditoriaSalarios
 Go
 
 
@@ -241,10 +241,10 @@ Begin
 	End
 End
 Go
-
+select* from users
 -- Usuario existente
 declare @message varchar(100)
-Exec sp_userAuthentication 'rocio.espinoza@correo.com', 'usu2021', @message output
+Exec sp_userAuthentication 'erika.rubiales@correo.com', 'usu2000', @message output
 Select @message
 go
 
@@ -408,3 +408,106 @@ BEGIN
     END
 END
 GO
+
+-------------
+---listar todos los empleados consu cargo actual--
+---------
+use nominaDB
+go;
+CREATE OR ALTER PROCEDURE sp_listEmployeesCurrentTitles
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    ;WITH CargosOrdenados AS
+    (
+        SELECT e.emp_no,
+               e.ci,
+               e.first_name,
+               e.last_name,
+               t.title,
+               t.from_date,
+               t.to_date,
+               ROW_NUMBER() OVER(PARTITION BY e.emp_no ORDER BY t.from_date DESC) AS rn
+        FROM employees e
+        INNER JOIN titles t ON e.emp_no = t.emp_no
+    )
+    SELECT emp_no, ci, first_name, last_name, title, from_date, to_date
+    FROM CargosOrdenados
+    WHERE rn = 1
+END
+exec sp_listEmployeesCurrentTitles;
+
+
+-------------------
+------Asignar un nuevo Cargo a un empleado----
+CREATE OR ALTER PROCEDURE sp_assignTitle
+
+    @emp_no INT,
+    @title VARCHAR(50),
+    @message NVARCHAR(200) OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Validar que el empleado exista
+    IF NOT EXISTS (SELECT 1 FROM employees WHERE emp_no = @emp_no)
+    BEGIN
+        SET @message = 'El empleado no existe.';
+        RETURN;
+    END
+
+    -- Verificar si ya tiene el mismo cargo activo
+    IF EXISTS (SELECT 1 FROM titles WHERE emp_no = @emp_no AND title = @title AND to_date IS NULL)
+    BEGIN
+        SET @message = 'El empleado ya tiene asignado ese cargo actualmente.';
+        RETURN;
+    END
+
+    -- Cerrar cualquier cargo activo anterior
+    UPDATE titles
+    SET to_date = GETDATE()
+    WHERE emp_no = @emp_no AND to_date IS NULL;
+
+    -- Insertar el nuevo cargo
+    INSERT INTO titles (emp_no, title, from_date, to_date)
+    VALUES (@emp_no, @title, GETDATE(), NULL);
+
+    SET @message = 'Cargo asignado correctamente.';
+END;
+GO
+
+
+DECLARE @msg NVARCHAR(200);
+EXEC sp_assignTitle 5, 'Gerente de Operaciones', @msg OUTPUT;
+SELECT @msg;
+-----------
+-----Historial de Cargos de un empleado---
+CREATE OR ALTER PROCEDURE sp_titlesHistory
+     @emp_no INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT title,
+           TRY_CONVERT(DATETIME, from_date) AS from_date,
+           TRY_CONVERT(DATETIME, to_date) AS to_date,
+           DATEDIFF(MONTH, 
+                    TRY_CONVERT(DATETIME, from_date), 
+                    ISNULL(TRY_CONVERT(DATETIME, to_date), GETDATE())
+                   ) AS meses_duracion
+    FROM titles
+    WHERE emp_no = @emp_no
+    ORDER BY TRY_CONVERT(DATETIME, from_date);
+END
+
+EXEC sp_titlesHistory 5;
+EXEC sp_help 'titles';
+SELECT * 
+FROM titles
+WHERE ISDATE(from_date) = 0
+   OR (to_date IS NOT NULL AND ISDATE(to_date) = 0);
+
+
+select* from employees
+------
