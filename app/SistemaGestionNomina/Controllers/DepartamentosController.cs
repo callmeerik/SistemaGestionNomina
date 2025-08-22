@@ -21,29 +21,24 @@ namespace SistemaGestionNomina.Controllers
             //return RedirectToAction("Agregar");
             return View("Departamento");
         }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-
-
-
-
 
         // Gestor para agregar departamentos
 
-        [HttpGet]
+
         public ActionResult Agregar()
         {
             ViewBag.ActiveTab = "agregar";
             return View("Departamento");
         }
-
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Agregar(Departamento dep)
         {
             if (!ModelState.IsValid) return View("Departamento", dep);
             try
             {
                 using (var cn = new SqlConnection(ConfigurationManager.ConnectionStrings["Cnn"].ConnectionString))
-                using (var cmd = new SqlCommand("sp_insertDeparment", cn))
+                using (var cmd = new SqlCommand("SPinsertDepartment", cn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@nombreDepar", dep.nombreDepar);
@@ -83,7 +78,7 @@ namespace SistemaGestionNomina.Controllers
             try
             {
                 using (var cn = new SqlConnection(ConfigurationManager.ConnectionStrings["Cnn"].ConnectionString))
-                using (var da = new SqlDataAdapter("sp_getDeparments", cn)) // tu SP
+                using (var da = new SqlDataAdapter("SPgetDepartments", cn)) // tu SP
                 {
                     da.SelectCommand.CommandType = CommandType.StoredProcedure;
                     da.Fill(dt_consultar);
@@ -131,7 +126,7 @@ namespace SistemaGestionNomina.Controllers
                 if (string.Equals(accion, "consultar", StringComparison.OrdinalIgnoreCase))
                 {
                     using (var cn = new SqlConnection(ConfigurationManager.ConnectionStrings["Cnn"].ConnectionString))
-                    using (var cmd = new SqlCommand("sp_getAsigDepartEmpl", cn))
+                    using (var cmd = new SqlCommand("SPgetAsigDepartEmpl", cn))
                     using (var da = new SqlDataAdapter(cmd))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
@@ -177,7 +172,7 @@ namespace SistemaGestionNomina.Controllers
                     }
 
                     using (var cn = new SqlConnection(ConfigurationManager.ConnectionStrings["Cnn"].ConnectionString))
-                    using (var cmd = new SqlCommand("sp_setAsigDepartEmpl", cn))
+                    using (var cmd = new SqlCommand("SPsetAsigDepartEmpl", cn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@emp_no", emp_no.Value);
@@ -226,7 +221,7 @@ namespace SistemaGestionNomina.Controllers
             try
             {
                 using (var cn = new SqlConnection(ConfigurationManager.ConnectionStrings["Cnn"].ConnectionString))
-                using (var da = new SqlDataAdapter("sp_getDept_manager", cn)) // tu SP
+                using (var da = new SqlDataAdapter("SPgetDept_manager", cn)) // tu SP
                 {
                     da.SelectCommand.CommandType = CommandType.StoredProcedure;
                     da.Fill(dt_historial);
