@@ -122,20 +122,10 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\EmpleadosController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-<<<<<<< HEAD
-    <Compile Include="Controllers\SalariosController.cs" />
-    <Compile Include="Filters\AuthorizeRoleAttribute.cs" />
-=======
->>>>>>> feature/empleados
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Empleados.cs" />
-<<<<<<< HEAD
-    <Compile Include="Models\Salarios.cs" />
-    <Compile Include="Models\Usuario.cs" />
-=======
->>>>>>> feature/empleados
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
