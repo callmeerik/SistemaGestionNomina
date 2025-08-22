@@ -385,11 +385,36 @@ CREATE OR ALTER PROCEDURE sp_updateEmployeeState
     @emp_no INT
 AS
 BEGIN
+    SET NOCOUNT ON;
+
+    -- Cambiar el estado activo/inactivo
     UPDATE employees
     SET is_active = CASE WHEN is_active = 1 THEN 0 ELSE 1 END
     WHERE emp_no = @emp_no;
-END
+
+    -- Si se está desactivando, cerrar vigencias
+    IF EXISTS (SELECT 1 FROM employees WHERE emp_no = @emp_no AND is_active = 0)
+    BEGIN
+        DECLARE @hoy DATE = CAST(GETDATE() AS DATE);
+
+        -- Terminar vigencia en departamentos
+        UPDATE dept_emp
+        SET to_date = @hoy
+        WHERE emp_no = @emp_no AND to_date IS NULL;
+
+        -- Terminar vigencia en salarios
+        UPDATE salaries
+        SET to_date = @hoy
+        WHERE emp_no = @emp_no AND to_date IS NULL;
+
+        -- Terminar vigencia en títulos/cargos
+        UPDATE titles
+        SET to_date = @hoy
+        WHERE emp_no = @emp_no AND to_date IS NULL;
+    END
+END;
 GO
+
 
 -- procedure para obtener empleados por emp_no
 CREATE OR ALTER PROCEDURE sp_getEmployeeById
@@ -586,3 +611,58 @@ BEGIN
     COMMIT TRAN;
 END
 GO
+
+
+
+/*
+========================================
+    PROCEDURE PARA DASHBOARD
+========================================
+*/
+Use nominaDB
+gO
+CREATE PROCEDURE dbo.sp_dashboardNomina
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Total empleados activos
+    SELECT COUNT(*) AS total_empleados
+    FROM employees e
+    JOIN dept_emp de ON e.emp_no = de.emp_no
+    WHERE de.to_date IS NULL;
+
+    -- Distribución por género
+    SELECT e.gender, COUNT(*) AS cantidad
+    FROM employees e
+    JOIN dept_emp de ON e.emp_no = de.emp_no
+    WHERE de.to_date IS NULL
+    GROUP BY e.gender;
+
+    -- Total departamentos
+    SELECT COUNT(*) AS total_departamentos
+    FROM departments;
+
+    -- Empleados por departamento
+    SELECT d.dept_name, COUNT(*) AS total_empleados
+    FROM departments d
+    JOIN dept_emp de ON d.dept_no = de.dept_no
+    WHERE de.to_date IS NULL
+    GROUP BY d.dept_name;
+
+    -- Promedio de salarios
+    SELECT AVG(s.salary) AS promedio_salario
+    FROM salaries s
+    WHERE s.to_date IS NULL;
+
+    -- Promedio de salarios por departamento
+    SELECT d.dept_name, AVG(s.salary) AS promedio_salario
+    FROM departments d
+    JOIN dept_emp de ON d.dept_no = de.dept_no
+    JOIN salaries s ON de.emp_no = s.emp_no
+    WHERE de.to_date IS NULL AND s.to_date IS NULL
+    GROUP BY d.dept_name;
+END;
+GO
+
+exec sp_dashboardNomina
