@@ -122,6 +122,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AutenticacionController.cs" />
     <Compile Include="Controllers\CargosController.cs" />
+    <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\DepartamentosController.cs" />
     <Compile Include="Controllers\EmpleadosController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -132,6 +133,7 @@
     </Compile>
     <Compile Include="Models\AuditoriaSalarios.cs" />
     <Compile Include="Models\Cargos.cs" />
+    <Compile Include="Models\Dashboard.cs" />
     <Compile Include="Models\Departamentos.cs" />
     <Compile Include="Models\Empleados.cs" />
     <Compile Include="Models\Salarios.cs" />
@@ -190,6 +192,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Autenticacion\Login.cshtml" />
     <Content Include="Views\Autenticacion\Register.cshtml" />
+    <Content Include="Views\Dashboard\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
