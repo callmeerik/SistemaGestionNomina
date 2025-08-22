@@ -146,26 +146,10 @@ declare @message varchar(250)
 exec sp_salaryTitles 8, @message output
 select @message
 GO
--- TRIGGERS
--- Accion sobre una tabla (UPDATE, DELETE, INSERT, SELECT)
--- Antes o despues de realizar la accion sobre la tabla
--- generalmente sirve para insertar informacion en la tabla
--- utiles en controles de auditoria
-
--- RF02: Cada vez que se cree un registro del salario de un empleado, necesito conocer la auditoria de quien crea el registro
-
--- Quien hizo el cambio
--- cuando lo hizo
--- cual fue el cambio
-
-	-- usuario
-	-- fecha de cambio
-	-- detalle del cambio
-	-- salario cambiado
-	-- codigo del empleado
 
 
--- creacion del trigger
+
+-- creacion del trigger cambio de salarios
 CREATE OR ALTER TRIGGER tr_employeeChangeSalary
 	on salaries
 	after insert
@@ -255,13 +239,13 @@ go
 -- PROCEDURES DE EMPLEADOS
 --==========================================
 CREATE OR ALTER PROCEDURE sp_insertEmployee
-    @ci varchar(10),
-    @birth_date varchar(20),
-    @first_name varchar(50),
-    @last_name varchar(50),
-    @correo varchar(100),
-    @gender char(1),
-    @clave varchar(12),
+    @ci VARCHAR(10),
+    @birth_date DATE,           -- Cambiado a DATE
+    @first_name VARCHAR(50),
+    @last_name VARCHAR(50),
+    @correo VARCHAR(100),
+    @gender CHAR(1),
+    @clave VARCHAR(64),
     @mensaje NVARCHAR(200) OUTPUT
 AS
 BEGIN
@@ -281,38 +265,15 @@ BEGIN
         RETURN;
     END;
 
-    -- Validar que el empleado sea mayor de 18 años
-    DECLARE @edad INT;
-    DECLARE @fecha_nacimiento DATE;
-
-    -- Convertir la fecha de nacimiento de VARCHAR a DATE
-    -- Usamos el formato 103 (dd/mm/yyyy) para la conversión
-    SET @fecha_nacimiento = CONVERT(DATE, @birth_date, 103);
-    
-    -- Calcular la edad
-    SET @edad = DATEDIFF(yy, @fecha_nacimiento, GETDATE());
-
-    -- Ajustar la edad si el cumpleaños no ha pasado este año
-    IF (MONTH(@fecha_nacimiento) > MONTH(GETDATE())) OR (MONTH(@fecha_nacimiento) = MONTH(GETDATE()) AND DAY(@fecha_nacimiento) > DAY(GETDATE()))
-    BEGIN
-        SET @edad = @edad - 1;
-    END;
-
-    IF @edad < 18
-    BEGIN
-        SET @mensaje = 'El empleado debe ser mayor de 18 años.';
-        RETURN;
-    END;
-
     -- Inserción de empleado
     INSERT INTO employees (ci, birth_date, first_name, last_name, gender, hire_date, correo)
     VALUES (
         @ci,
-        @birth_date, -- Mantienes el formato original
+        @birth_date,
         @first_name,
         @last_name,
         @gender,
-        CAST(GETDATE() AS DATE), -- Usar GETDATE() directamente para la fecha de contratación
+        GETDATE(),     -- Fecha actual como DATE
         @correo
     );
 
@@ -331,11 +292,6 @@ BEGIN
     SET @mensaje = 'Empleado y usuario registrados correctamente.';
 END;
 GO
-declare @mensaje varchar(100)
-exec sp_insertEmployee '1245763307', '12/09/2001', 'Roberto', 'Borja', 
-				'robert@correo.com', 'M', 'rovert3', @mensaje output
-select @mensaje
-go
 
 -- procedure para lista todos los empleados
 CREATE OR ALTER PROCEDURE sp_getEmployees
@@ -447,24 +403,6 @@ END
 GO
 
 
-
-/*
-  =================================
-    PROCEDURE PARA PAGINA DE INICIO
-  =================================
-*/
-CREATE OR ALTER PROCEDURE sp_getDashboardMetrics
-AS
-BEGIN
-    SELECT 
-        (SELECT COUNT(*) FROM employees) AS TotalEmpleados,
-        (SELECT COUNT(*) FROM departments) AS TotalDepartamentos,
-        (SELECT AVG(salary) FROM salaries WHERE to_date IS NULL) AS PromedioSalarioVigente;
-END;
-GO
-
-
-
 /*
 ==============================
     PROCEDUREs Departamentos
@@ -501,7 +439,7 @@ END
 GO
 
 EXEC sp_getDeparments
-
+Go
 
 CREATE OR ALTER PROCEDURE sp_getDept_manager
 AS
@@ -522,7 +460,7 @@ END
 GO
 
 EXEC sp_getDept_manager
-
+Go
 
 --- busca el empleado al que se le va a realizar la actualizacion de departamento
 
@@ -586,3 +524,65 @@ BEGIN
 END
 GO
 
+
+CREATE OR ALTER PROCEDURE dbo.sp_setAsigDepartEmpl
+    @emp_no          INT,
+    @dept_no         INT,
+    @dept_no_nuevo   INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
+    DECLARE @hoy DATE = CAST(GETDATE() AS DATE);
+    DECLARE @dept_no_actual INT;
+
+    -- 1) Obtener el departamento vigente del empleado
+    SELECT @dept_no_actual = d.dept_no
+    FROM dbo.dept_emp AS d
+    WHERE d.emp_no = @emp_no
+      AND d.to_date IS NULL;
+
+    IF @dept_no_actual IS NULL
+        THROW 50001, 'El empleado no tiene una asignación vigente.', 1;
+
+    -- 2) Verificar que el dept actual coincide con el proporcionado
+    IF @dept_no_actual <> @dept_no
+        THROW 50002, 'El departamento actual no coincide con el proporcionado.', 1;
+
+    -- 3) Evitar reasignación al mismo departamento
+    IF @dept_no_nuevo = @dept_no_actual
+        THROW 50003, 'El departamento nuevo es igual al actual.', 1;
+
+    -- 4) Evitar duplicar una asignación vigente al nuevo depto
+    IF EXISTS (
+        SELECT 1
+        FROM dbo.dept_emp
+        WHERE emp_no  = @emp_no
+          AND dept_no = @dept_no_nuevo
+          AND to_date IS NULL
+    )
+        THROW 50004, 'Ya existe una asignación vigente al nuevo departamento.', 1;
+
+    BEGIN TRAN;
+
+        -- 5) Cerrar la asignación actual (IMPORTANTE: usar IS NULL, no = NULL)
+        UPDATE dbo.dept_emp
+        SET to_date = @hoy
+        WHERE emp_no  = @emp_no
+          AND dept_no = @dept_no_actual
+          AND to_date IS NULL;
+
+        IF @@ROWCOUNT = 0
+        BEGIN
+            ROLLBACK TRAN;
+            THROW 50005, 'No se pudo cerrar la asignación vigente (ninguna fila afectada).', 1;
+        END
+
+        -- 6) Insertar la nueva asignación
+        INSERT INTO dbo.dept_emp (emp_no, dept_no, from_date, to_date)
+        VALUES (@emp_no, @dept_no_nuevo, @hoy, NULL);
+
+    COMMIT TRAN;
+END
+GO
