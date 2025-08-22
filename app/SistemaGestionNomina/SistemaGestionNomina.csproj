@@ -120,21 +120,12 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Controllers\AutenticacionController.cs" />
-    <Compile Include="Controllers\CargosController.cs" />
-    <Compile Include="Controllers\DepartamentosController.cs" />
     <Compile Include="Controllers\EmpleadosController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\SalariosController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\AuditoriaSalarios.cs" />
-    <Compile Include="Models\Cargos.cs" />
-    <Compile Include="Models\Departamentos.cs" />
     <Compile Include="Models\Empleados.cs" />
-    <Compile Include="Models\Salarios.cs" />
-    <Compile Include="Models\Usuarios.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -193,10 +184,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Autenticacion\" />
-    <Folder Include="Views\Cargos\" />
-    <Folder Include="Views\Departamentos\" />
-    <Folder Include="Views\Salarios\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />
