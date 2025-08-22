@@ -9,7 +9,7 @@ namespace SistemaGestionNomina.Controllers
 {
     public class SalariosController : Controller
     {
-        private readonly string connectionString = ConfigurationManager.ConnectionStrings["NominaDB"].ConnectionString;
+        private readonly string connectionString = ConfigurationManager.ConnectionStrings["Cnn"].ConnectionString;
 
         // GET: Salarios (lista salarios actuales)
         public ActionResult Index()
