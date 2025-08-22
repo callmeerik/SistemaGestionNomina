@@ -427,6 +427,7 @@ BEGIN
 END
 GO
 
+<<<<<<< Updated upstream
 
 /*
 ==============================
@@ -467,6 +468,42 @@ EXEC sp_getDeparments
 Go
 
 CREATE OR ALTER PROCEDURE sp_getDept_manager
+=======
+SELECT @mensajeSalida AS Resultado;
+
+
+
+/*
+STORE PROCEDURE PARA MODULO DE DEPARTAMENTOS
+*/
+
+CREATE OR ALTER PROCEDURE dbo.SPinsertDepartment
+   -- @dept_no INT,
+    @nombreDepar VARCHAR(50)
+AS
+BEGIN
+    INSERT INTO dbo.departments ( dept_name)
+    VALUES (@nombreDepar);
+	 --VALUES (@dept_no, @dept_name);
+END
+GO
+
+
+
+
+
+CREATE OR ALTER PROCEDURE dbo.SPgetDepartments
+AS
+BEGIN
+	SELECT  dept_no AS Id, dept_name AS Departamento FROM dbo.departments
+END
+GO
+
+
+
+
+CREATE OR ALTER PROCEDURE dbo.SPgetDept_manager
+>>>>>>> Stashed changes
 AS
 BEGIN
 SELECT  e.emp_no AS Id,
@@ -478,6 +515,7 @@ SELECT  e.emp_no AS Id,
 		d.from_date AS Desde,
 		d.to_date AS Hasta
      
+<<<<<<< Updated upstream
 FROM employees   e
 JOIN dept_emp    d ON e.emp_no  = d.emp_no
 JOIN departments s ON d.dept_no = s.dept_no;
@@ -490,6 +528,18 @@ Go
 --- busca el empleado al que se le va a realizar la actualizacion de departamento
 
 CREATE OR ALTER PROCEDURE sp_getAsigDepartEmpl
+=======
+FROM dbo.employees   e
+JOIN dept_emp    d ON e.emp_no  = d.emp_no
+JOIN dbo.departments s ON d.dept_no = s.dept_no;
+END
+GO
+
+
+--- busca el empleado al que se le va a realizar la actualizacion de departamento
+
+CREATE OR ALTER PROCEDURE dbo.SPgetAsigDepartEmpl
+>>>>>>> Stashed changes
 @ci varchar(50)
 AS
 BEGIN
@@ -509,6 +559,7 @@ SELECT  e.emp_no AS Id,
 		d.from_date AS Desde,
 		d.to_date AS Hasta
      
+<<<<<<< Updated upstream
 FROM employees   e
 JOIN dept_emp    d ON e.emp_no  = d.emp_no 
 JOIN departments s ON d.dept_no = s.dept_no WHERE e.ci = @ci;
@@ -545,12 +596,23 @@ BEGIN
     -- Agregar nuevo registro con to_date = NULL
     INSERT INTO dept_emp (emp_no, dept_no, from_date, to_date)
     VALUES (@emp_no, @dept_no_nuevo, @hoy, NULL); -- Sera NULL
+=======
+FROM dbo.employees   e
+JOIN dept_emp    d ON e.emp_no  = d.emp_no 
+JOIN dbo.departments s ON d.dept_no = s.dept_no WHERE e.ci = @ci;
+>>>>>>> Stashed changes
 
 END
 GO
 
 
+<<<<<<< Updated upstream
 CREATE OR ALTER PROCEDURE dbo.sp_setAsigDepartEmpl
+=======
+
+
+CREATE OR ALTER PROCEDURE dbo.SPsetAsigDepartEmpl
+>>>>>>> Stashed changes
     @emp_no          INT,
     @dept_no         INT,
     @dept_no_nuevo   INT
@@ -610,6 +672,7 @@ BEGIN
 
     COMMIT TRAN;
 END
+<<<<<<< Updated upstream
 GO
 
 
@@ -666,3 +729,6 @@ END;
 GO
 
 exec sp_dashboardNomina
+=======
+GO
+>>>>>>> Stashed changes
