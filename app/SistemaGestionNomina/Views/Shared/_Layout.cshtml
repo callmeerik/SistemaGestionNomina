@@ -22,6 +22,7 @@
             <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
                     <li>@Html.ActionLink("Inicio", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+<<<<<<< HEAD
 
                     @if (Session["UserRole"] != null)
                     {
@@ -36,7 +37,7 @@
                         if (Session["UserRole"].ToString() == "RRHH")
                         {
                             // Aqui agregar lo que hace falta para RRHH
-                            <li>@Html.ActionLink("Empleados", "Listado", "Empleados", new { area = "" }, new { @class = "nav-link" })</li>
+                            <li>@Html.ActionLink("Empleados", "Index", "Empleados", new { area = "" }, new { @class = "nav-link" })</li>
                             <li>@Html.ActionLink("Departamentos", "", "Departamentos", new { area = "" }, new { @class = "nav-link" })</li>
                             <li>@Html.ActionLink("Cargos", "", "Cargos", new { area = "" }, new { @class = "nav-link" })</li>
                             <li>@Html.ActionLink("Salarios", "", "Salarios", new { area = "" }, new { @class = "nav-link" })</li>
@@ -58,7 +59,6 @@
                         <li>@Html.ActionLink("Login", "Login", "Autenticacion", new { area = "" }, new { @class = "nav-link" })</li>
                         <li>@Html.ActionLink("Registrarse", "Register", "Autenticacion", new { area = "" }, new { @class = "nav-link" })</li>
                     }
-
                 </ul>
             </div>
 
