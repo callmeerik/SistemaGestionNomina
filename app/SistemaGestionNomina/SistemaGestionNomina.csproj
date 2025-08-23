@@ -120,22 +120,12 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Controllers\AutenticacionController.cs" />
-    <Compile Include="Controllers\CargosController.cs" />
-    <Compile Include="Controllers\DepartamentosController.cs" />
     <Compile Include="Controllers\EmpleadosController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\SalariosController.cs" />
-    <Compile Include="Filters\AuthorizeRoleAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\AuditoriaSalarios.cs" />
-    <Compile Include="Models\Cargos.cs" />
-    <Compile Include="Models\Departamentos.cs" />
     <Compile Include="Models\Empleados.cs" />
-    <Compile Include="Models\Salarios.cs" />
-    <Compile Include="Models\Usuario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -190,6 +180,9 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Autenticacion\Login.cshtml" />
     <Content Include="Views\Autenticacion\Register.cshtml" />
+    <Content Include="Views\Empleados\Index.cshtml" />
+    <Content Include="Views\Empleados\EditarEmpleado.cshtml" />
+    <Content Include="Views\Empleados\CrearEmpleado.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
