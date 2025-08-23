@@ -6,7 +6,7 @@
 *.sln.docstates
 
 ## Build results (dentro del proyecto SistemaGestionNomina)
-
+app/SistemaGestionNomina/bin/
 app/SistemaGestionNomina/obj/
 app/SistemaGestionNomina/[Bb]uild/
 app/SistemaGestionNomina/[Dd]ebug*/

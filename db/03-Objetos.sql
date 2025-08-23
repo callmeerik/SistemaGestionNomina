@@ -322,8 +322,8 @@ go
 
 -- procedure para lista todos los empleados
 CREATE OR ALTER PROCEDURE sp_getEmployees
-    @query NVARCHAR(100) = NULL,
-    @estado NVARCHAR(20) = 'Todos'
+    @query VARCHAR(100) = NULL,
+    @estado VARCHAR(20) = 'Todos'
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -413,6 +413,7 @@ BEGIN
 END
 GO
 
+<<<<<<< HEAD
 
 
 
@@ -487,10 +488,39 @@ GO
 CREATE OR ALTER PROCEDURE sp_insertEmployee
     @ci VARCHAR(10),
     @birth_date DATE,           -- Cambiado a DATE
+=======
+-- Procedure para actualizar estado de empleado
+CREATE OR ALTER PROCEDURE sp_updateEmployeeState
+    @emp_no INT
+AS
+BEGIN
+    UPDATE employees
+    SET is_active = CASE WHEN is_active = 1 THEN 0 ELSE 1 END
+    WHERE emp_no = @emp_no;
+END
+GO
+
+-- procedure para obtener empleados por emp_no
+CREATE OR ALTER PROCEDURE sp_getEmployeeById
+    @emp_no INT
+AS
+BEGIN
+    SELECT emp_no, ci, first_name, last_name, correo, gender, birth_date, hire_date, is_active
+    FROM employees
+    WHERE emp_no = @emp_no;
+END
+GO
+
+--- procedure para actualizar datos del empleado
+CREATE OR ALTER PROCEDURE sp_UpdateEmployee
+    @emp_no INT,
+    @ci VARCHAR(10),
+>>>>>>> feature/empleados
     @first_name VARCHAR(50),
     @last_name VARCHAR(50),
     @correo VARCHAR(100),
     @gender CHAR(1),
+<<<<<<< HEAD
     @clave VARCHAR(64),
     @mensaje NVARCHAR(200) OUTPUT
 AS
@@ -553,149 +583,18 @@ EXEC sp_insertEmployee
     @mensaje = @mensajeSalida OUTPUT;
 
 SELECT @mensajeSalida AS Resultado;
-
-
-
-
-/*
-
-STORE PROCEDURE PARA MODULO DE DEPARTAMENTOS
-*/
-
-CREATE OR ALTER PROCEDURE dbo.SPinsertDepartment
-   -- @dept_no INT,
-    @nombreDepar VARCHAR(50)
+=======
+    @birth_date VARCHAR(20)
 AS
 BEGIN
-    INSERT INTO dbo.departments ( dept_name)
-    VALUES (@nombreDepar);
-	 --VALUES (@dept_no, @dept_name);
+    UPDATE employees
+    SET ci = @ci,
+        first_name = @first_name,
+        last_name = @last_name,
+        correo = @correo,
+        gender = @gender,
+        birth_date = @birth_date
+    WHERE emp_no = @emp_no;
 END
 GO
-
-
-
-
-
-CREATE OR ALTER PROCEDURE dbo.SPgetDepartments
-AS
-BEGIN
-	SELECT  dept_no AS Id, dept_name AS Departamento FROM dbo.departments
-END
-GO
-
-
-
-
-CREATE OR ALTER PROCEDURE dbo.SPgetDept_manager
-AS
-BEGIN
-SELECT  e.emp_no AS Id,
-        e.ci AS CI,
-        e.birth_date AS F_Nacimiento,
-        CONCAT(e.first_name, ' ', e.last_name) AS Nombres,
-        e.hire_date AS F_Ingreso,
-        s.dept_name AS Departamento,
-		d.from_date AS Desde,
-		d.to_date AS Hasta
-     
-FROM dbo.employees   e
-JOIN dept_emp    d ON e.emp_no  = d.emp_no
-JOIN dbo.departments s ON d.dept_no = s.dept_no;
-END
-GO
-
-
---- busca el empleado al que se le va a realizar la actualizacion de departamento
-
-CREATE OR ALTER PROCEDURE dbo.SPgetAsigDepartEmpl
-@ci varchar(50)
-AS
-BEGIN
-	--Validación si ya existe departamento con el mismo nombre
-	IF  NOT EXISTS(SELECT 1 FROM dbo.employees WHERE ci = @ci)
-	BEGIN
-	RAISERROR(N'No existe empleado con ese número de cédula.',16,1);
-	RETURN;
-	END
-
-
-SELECT  e.emp_no AS Id,
-        e.ci AS CI,
-        CONCAT(e.first_name, ' ', e.last_name) AS Nombres,
-		d.dept_no AS Id_Departamento,
-		s.dept_name AS Departamento,
-		d.from_date AS Desde,
-		d.to_date AS Hasta
-     
-FROM dbo.employees   e
-JOIN dept_emp    d ON e.emp_no  = d.emp_no 
-JOIN dbo.departments s ON d.dept_no = s.dept_no WHERE e.ci = @ci;
-
-END
-GO
-
-
-
-
-CREATE OR ALTER PROCEDURE dbo.SPsetAsigDepartEmpl
-    @emp_no          INT,
-    @dept_no         INT,
-    @dept_no_nuevo   INT
-AS
-BEGIN
-    SET NOCOUNT ON;
-    SET XACT_ABORT ON;
-
-    DECLARE @hoy DATE = CAST(GETDATE() AS DATE);
-    DECLARE @dept_no_actual INT;
-
-    -- 1) Obtener el departamento vigente del empleado
-    SELECT @dept_no_actual = d.dept_no
-    FROM dbo.dept_emp AS d
-    WHERE d.emp_no = @emp_no
-      AND d.to_date IS NULL;
-
-    IF @dept_no_actual IS NULL
-        THROW 50001, 'El empleado no tiene una asignación vigente.', 1;
-
-    -- 2) Verificar que el dept actual coincide con el proporcionado
-    IF @dept_no_actual <> @dept_no
-        THROW 50002, 'El departamento actual no coincide con el proporcionado.', 1;
-
-    -- 3) Evitar reasignación al mismo departamento
-    IF @dept_no_nuevo = @dept_no_actual
-        THROW 50003, 'El departamento nuevo es igual al actual.', 1;
-
-    -- 4) Evitar duplicar una asignación vigente al nuevo depto
-    IF EXISTS (
-        SELECT 1
-        FROM dbo.dept_emp
-        WHERE emp_no  = @emp_no
-          AND dept_no = @dept_no_nuevo
-          AND to_date IS NULL
-    )
-        THROW 50004, 'Ya existe una asignación vigente al nuevo departamento.', 1;
-
-    BEGIN TRAN;
-
-        -- 5) Cerrar la asignación actual (IMPORTANTE: usar IS NULL, no = NULL)
-        UPDATE dbo.dept_emp
-        SET to_date = @hoy
-        WHERE emp_no  = @emp_no
-          AND dept_no = @dept_no_actual
-          AND to_date IS NULL;
-
-        IF @@ROWCOUNT = 0
-        BEGIN
-            ROLLBACK TRAN;
-            THROW 50005, 'No se pudo cerrar la asignación vigente (ninguna fila afectada).', 1;
-        END
-
-        -- 6) Insertar la nueva asignación
-        INSERT INTO dbo.dept_emp (emp_no, dept_no, from_date, to_date)
-        VALUES (@emp_no, @dept_no_nuevo, @hoy, NULL);
-
-    COMMIT TRAN;
-END
-GO
+>>>>>>> feature/empleados
