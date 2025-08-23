@@ -1,0 +1,67 @@
+﻿@model List<SistemaGestionNomina.Models.Cargos>
+@{
+    ViewBag.Title = "Lista de Empleados y Cargos";
+}
+
+<h1 class="mb-4">Lista de Empleados y Cargos</h1>
+
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-success">@TempData["Mensaje"]</div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<!-- Formulario de búsqueda por cédula -->
+<div class="mb-3">
+    @using (Html.BeginForm("Index", "Cargos", FormMethod.Get))
+    {
+        <div class="input-group">
+            <input type="text" name="ci" class="form-control" placeholder="Buscar por cédula" value="@Request.QueryString["ci"]" />
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </div>
+    }
+</div>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Emp No</th>
+            <th>Cédula</th>
+            <th>Nombre Completo</th>
+            <th>Cargo Actual</th>
+            <th>Desde</th>
+            <th>Hasta</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.emp_no</td>
+                    <td>@item.ci</td>
+                    <td>@item.NombreCompleto</td>
+                    <td>@item.CargoActual</td>
+                    <td>@item.Desde</td>
+                    <td>@item.Hasta</td>
+                    <td>
+                        <a href="@Url.Action("AsignarCargo", "Cargos", new { emp_no = item.emp_no })" class="btn btn-primary btn-sm">Asignar Cargo</a>
+                        <a href="@Url.Action("Historial", "Cargos", new { emp_no = item.emp_no })" class="btn btn-info btn-sm">Historial</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="7" class="text-center">No hay empleados para mostrar.</td>
+            </tr>
+        }
+    </tbody>
+</table>
