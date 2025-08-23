@@ -11,10 +11,10 @@ namespace SistemaGestionNomina.Controllers
     {
         private readonly string connectionString = ConfigurationManager.ConnectionStrings["Cnn"].ConnectionString;
 
-        // GET: Salarios (lista salarios actuales)
+        // ✅ GET: Salarios (lista de empleados con salario actual)
         public ActionResult Index()
         {
-            List<EmpleadoSalarioActual> empleados = new List<EmpleadoSalarioActual>();
+            var empleados = new List<EmpleadoSalarioActual>();
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
@@ -38,13 +38,13 @@ namespace SistemaGestionNomina.Controllers
                 }
             }
 
-            return View(empleados);
+            return View(empleados); // 👈 Vista recibe la lista
         }
 
-        // GET: Historial de un empleado
+        // ✅ GET: Historial de un empleado
         public ActionResult Historial(int id)
         {
-            List<HistorialSalario> historial = new List<HistorialSalario>();
+            var historial = new List<HistorialSalario>();
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
@@ -67,10 +67,10 @@ namespace SistemaGestionNomina.Controllers
                 }
             }
 
-            return View(historial);
+            return View(historial); // 👈 Vista recibe historial de 1 empleado
         }
 
-        // POST: Asignar o actualizar salario
+        // ✅ POST: Asignar o actualizar salario
         [HttpPost]
         public ActionResult AsignarSalario(int emp_no, decimal salario)
         {
@@ -86,7 +86,8 @@ namespace SistemaGestionNomina.Controllers
                 cmd.ExecuteNonQuery();
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index"); // vuelve al listado
         }
     }
 }
+
