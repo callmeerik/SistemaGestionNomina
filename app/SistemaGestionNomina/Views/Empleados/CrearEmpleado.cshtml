@@ -1,0 +1,84 @@
+﻿
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+</head>
+<body style="background: gray">
+    <main class="container d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-6">
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger text-center" role="alert">
+                    @TempData["Error"]
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-success text-center" role="alert">
+                    @TempData["Mensaje"]
+                </div>
+            }
+
+            <div class="card shadow-lg p-4">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Creación de Empleado</h2>
+                    <form action="@Url.Action("CrearEmpleado", "Empleados")" method="post">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="nombre" class="form-label">Nombre</label>
+                                <input type="text" class="form-control form-control-lg" name="first_name" id="first_name" placeholder="Ingrese su nombre" required />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="apellido" class="form-label">Apellido</label>
+                                <input type="text" class="form-control form-control-lg" name="last_name" id="apellido" placeholder="Ingrese su apellido" required />
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="ci" class="form-label">Cédula</label>
+                                <input type="text" class="form-control form-control-lg" name="ci" id="ci" placeholder="Ingrese su número de identificación" required />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="birth_date" class="form-label">Fecha de Nacimiento</label>
+                                <input type="date" class="form-control form-control-lg" name="birth_date" id="birth_date" required />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Género</label>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="gender" id="genderF" value="F" required />
+                                    <label class="form-check-label" for="genderF">Femenino</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="gender" id="genderM" value="M" required />
+                                    <label class="form-check-label" for="genderM">Masculino</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="correo" class="form-label">Correo</label>
+                            <input type="email" class="form-control form-control-lg" name="correo" id="correo" placeholder="ejemplo@correo.com" required />
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="clave" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control form-control-lg" name="clave" id="clave" required />
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="@Url.Action("Index", "Empleados")" class="btn btn-secondary btn-lg order-2 order-md-1">Cancelar</a>
+                            <button type="submit" class="btn btn-primary btn-lg order-1 order-md-2">Crear</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
+
