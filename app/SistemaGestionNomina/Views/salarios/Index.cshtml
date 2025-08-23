@@ -1,0 +1,28 @@
+@model List<SistemaGestionNomina.Models.EmpleadoSalarioActual>
+
+<h2>Salarios actuales</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Empleado</th>
+            <th>CI</th>
+            <th>Salario</th>
+            <th>Desde</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var e in Model)
+        {
+            <tr>
+                <td>@e.first_name @e.last_name</td>
+                <td>@e.ci</td>
+                <td>@e.salary.ToString("C")</td>
+                <td>@e.from_date</td>
+                <td>
+                    <a href="@Url.Action("Historial", "Salarios", new { id = e.emp_no })">Ver historial</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

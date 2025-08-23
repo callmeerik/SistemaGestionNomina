@@ -114,7 +114,7 @@
     <Compile Include="Controllers\DepartamentosController.cs" />
     <Compile Include="Controllers\EmpleadosController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\SalariosController.cs" />
+    <Compile Include="Filters\AuthorizeRoleAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -176,6 +176,10 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Empleados\Index.cshtml" />
+    <Content Include="Views\Departamentos\Departamento.cs" />
+    <Content Include="Views\Empleados\EditarEmpleado.cshtml" />
+    <Content Include="Views\Empleados\CrearEmpleado.cshtml" />
     <Content Include="Views\Cargos\Index.cshtml" />
     <Content Include="Views\Cargos\AsignarCargo.cshtml" />
     <Content Include="Views\Cargos\Historial.cshtml" />
