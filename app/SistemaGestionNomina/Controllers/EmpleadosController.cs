@@ -38,12 +38,12 @@ namespace SistemaGestionNomina.Controllers
                         {
                             emp_no = Convert.ToInt32(reader["emp_no"]),
                             ci = reader["ci"].ToString(),
-                            birth_date = reader["birth_date"].ToString(),
+                            birth_date = Convert.ToDateTime(reader["birth_date"]),
                             first_name = reader["first_name"].ToString(),
                             last_name = reader["last_name"].ToString(),
                             gender = Convert.ToChar(reader["gender"]),
                             correo = reader["correo"].ToString(),
-                            hire_date = reader["hire_date"].ToString(),
+                            hire_date = Convert.ToDateTime(reader["hire_date"]),
                             is_active = Convert.ToBoolean(reader["is_active"])
                         };
                         empleados.Add( emp );
@@ -135,8 +135,8 @@ namespace SistemaGestionNomina.Controllers
                             last_name = reader["last_name"].ToString(),
                             correo = reader["correo"].ToString(),
                             gender = reader["gender"].ToString()[0],
-                            birth_date = reader["birth_date"].ToString(),
-                            hire_date = reader["hire_date"].ToString(),
+                            birth_date = Convert.ToDateTime(reader["birth_date"]),
+                            hire_date = Convert.ToDateTime(reader["hire_date"]),
                             is_active = (bool)reader["is_active"]
                         };
                             
@@ -155,6 +155,8 @@ namespace SistemaGestionNomina.Controllers
         [HttpPost]
         public ActionResult EditarEmpleado(Empleados emp)
         {
+            AutenticacionController auth = new AutenticacionController();
+
             if (!ModelState.IsValid)
             {
                 return View(emp);
@@ -167,11 +169,27 @@ namespace SistemaGestionNomina.Controllers
                     SqlCommand cmd = new SqlCommand("sp_updateEmployeePassword", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("emp_no", emp.emp_no);
+                    cmd.Parameters.AddWithValue("ci", emp.ci);
+                    cmd.Parameters.AddWithValue("birth_date", emp.birth_date);
                     cmd.Parameters.AddWithValue("first_name", emp.first_name);
                     cmd.Parameters.AddWithValue("last_name", emp.last_name);
+                    cmd.Parameters.AddWithValue("hire_date", emp.hire_date);
                     cmd.Parameters.AddWithValue("correo", emp.correo);
                     cmd.Parameters.AddWithValue("gender", emp.gender);
-                    cmd.Parameters.AddWithValue("clave", emp.clave);
+                    // auth = instancia de tu clase que tiene HashPassword
+                    if (!string.IsNullOrEmpty(emp.clave))
+                    {
+                        // Solo si el usuario escribió algo nuevo
+                        string hashedClave = auth.HashPassword(emp.clave);
+                        emp.clave = hashedClave;
+                        cmd.Parameters.AddWithValue("clave", hashedClave);
+
+                    }
+                    else
+                    {
+                        cmd.Parameters.AddWithValue("clave", emp.clave);
+                    }
+
                     conn.Open();    
                     cmd.ExecuteNonQuery();
 
@@ -183,7 +201,7 @@ namespace SistemaGestionNomina.Controllers
             }
             catch (SqlException ex)
             {
-                TempData["Error"] = $"Error al actualizar a empleado: {ex.Message}";
+                TempData["Error"] = $"Error base de datos: {ex.Message}";
                 return View(emp);
             }
             catch (Exception ex)
@@ -203,6 +221,7 @@ namespace SistemaGestionNomina.Controllers
         [HttpPost]
         public ActionResult CrearEmpleado(Empleados emp)
         {
+            AutenticacionController auth = new AutenticacionController();
             string mensaje = "";
             try
             {
@@ -216,7 +235,8 @@ namespace SistemaGestionNomina.Controllers
                     cmd.Parameters.AddWithValue("birth_date", emp.birth_date);
                     cmd.Parameters.AddWithValue("gender", emp.gender);
                     cmd.Parameters.AddWithValue("correo", emp.correo);
-                    cmd.Parameters.AddWithValue("clave", emp.clave);
+                    string hashedClave = auth.HashPassword(emp.clave);
+                    cmd.Parameters.AddWithValue("clave", hashedClave);
                     cmd.Parameters.Add("mensaje", SqlDbType.VarChar, 100).Direction = ParameterDirection.Output;
                     conn.Open();
                     cmd.ExecuteNonQuery();

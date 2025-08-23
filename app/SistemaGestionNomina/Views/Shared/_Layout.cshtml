@@ -36,8 +36,10 @@
                         }
                         if (Session["UserRole"].ToString() == "RRHH")
                         {
+
                             // Aqui agregar lo que hace falta para RRHH
-                            <li>@Html.ActionLink("Empleados", "Listado", "Empleados", new { area = "" }, new { @class = "nav-link" })</li>
+                            <li>@Html.ActionLink("Dashboard", "Index", "Dashboard", new { area = "" }, new { @class = "nav-link" })</li>
+                            <li>@Html.ActionLink("Empleados", "Index", "Empleados", new { area = "" }, new { @class = "nav-link" })</li>
                             <li>@Html.ActionLink("Departamentos", "Departamento", "Departamentos", new { area = "" }, new { @class = "nav-link" })</li>
                             <li>@Html.ActionLink("Cargos", "", "Cargos", new { area = "" }, new { @class = "nav-link" })</li>
                             <li>@Html.ActionLink("Salarios", "", "Salarios", new { area = "" }, new { @class = "nav-link" })</li>
