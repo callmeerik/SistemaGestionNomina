@@ -1,0 +1,42 @@
+﻿@model List<SistemaGestionNomina.Models.Historial>
+@{
+    ViewBag.Title = "Historial de Cargos";
+}
+
+<h2 class="mb-4">Historial de Cargos</h2>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (Model.Any())
+{
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Cargo</th>
+                <th>Desde</th>
+                <th>Hasta</th>
+                <th>Duración (meses)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Title</td>
+                    <td>@item.Desde</td>
+                    <td>@item.Hasta</td>
+                    <td>@item.DuracionMeses</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No hay historial para este empleado.</p>
+}
+
+<a href="@Url.Action("Index", "Cargos")" class="btn btn-secondary mt-3">Volver a la lista</a>
