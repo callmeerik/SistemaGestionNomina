@@ -1,0 +1,69 @@
+﻿
+@model List<SistemaGestionNomina.Models.AuditoriaSalarios>
+@{
+    ViewBag.Title = "Auditoría de Salarios";
+}
+<h2>@ViewBag.Title</h2>
+
+<table id="tablaLogs" class="display nowrap" style="width:100%">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Usuario</th>
+            <th>Fecha</th>
+            <th>Detalle</th>
+            <th>Salario</th>
+            <th>Empleado</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.id</td>
+                <td>@item.usuario</td>
+                <td>@item.fecha_actualizacion.ToString("yyyy-MM-dd")</td>
+                <td>@item.detalle_cambio</td>
+                <td>@item.salario.ToString("C0")</td>
+                <td>@item.emp_no</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section scripts {
+    <!-- DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css" />
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+
+    <script>
+$(function () {
+            $('#tablaLogs').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'excel', 'csv',
+                    {
+                        extend: 'pdfHtml5',
+                        text: 'Exportar PDF',
+                        orientation: 'landscape',
+                        pageSize: 'A4',
+                        title: 'Reporte de Auditoría de Salarios'
+                    },
+                    'print'
+                ],
+                pageLength: 10,
+                order: [[0, 'desc']]
+            });
+        });</script>
+}
+
+

@@ -109,6 +109,7 @@
     <Compile Include="App_Start\BundleConfig2.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\AuditoriaSalariosController.cs" />
     <Compile Include="Controllers\AutenticacionController.cs" />
     <Compile Include="Controllers\CargosController.cs" />
     <Compile Include="Controllers\DepartamentosController.cs" />
@@ -179,10 +180,24 @@
     <Content Include="Views\Dashboard\Index.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+
+    <Content Include="Views\Salarios\Index.cshtml" />
+    <Content Include="Views\Salarios\Historial.cshtml" />
+    <Content Include="Views\Salarios\AsignarSalario.cshtml" />
+    <Content Include="Views\AuditoriaSalarios\Index.cshtml" />
+
+    <Content Include="Views\Autenticacion\Login.cshtml" />
+    <Content Include="Views\Autenticacion\Register.cshtml" />
+    <Content Include="Views\Dashboard\Index.cshtml" />
+
     <Content Include="Views\Empleados\Index.cshtml" />
     <Content Include="Views\Departamentos\Departamento.cs" />
     <Content Include="Views\Empleados\EditarEmpleado.cshtml" />
     <Content Include="Views\Empleados\CrearEmpleado.cshtml" />
+    <Content Include="Views\Departamentos\Departamento.cshtml" />
+
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="Views\Cargos\Index.cshtml" />
     <Content Include="Views\Cargos\AsignarCargo.cshtml" />
     <Content Include="Views\Cargos\Historial.cshtml" />
@@ -190,10 +205,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Data\" />
-    <Folder Include="Views\Autenticacion\" />
-    <Folder Include="Views\Departamentos\" />
-    <Folder Include="Views\Empleados\" />
-    <Folder Include="Views\Salarios\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />
