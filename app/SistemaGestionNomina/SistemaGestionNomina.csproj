@@ -120,6 +120,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\AuditoriaSalariosController.cs" />
     <Compile Include="Controllers\AutenticacionController.cs" />
     <Compile Include="Controllers\CargosController.cs" />
     <Compile Include="Controllers\DepartamentosController.cs" />
@@ -190,6 +191,7 @@
     <Content Include="Views\Salarios\Index.cshtml" />
     <Content Include="Views\Salarios\Historial.cshtml" />
     <Content Include="Views\Salarios\AsignarSalario.cshtml" />
+    <Content Include="Views\AuditoriaSalarios\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

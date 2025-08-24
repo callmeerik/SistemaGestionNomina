@@ -23,7 +23,7 @@
             <tr>
                 <td>@item.first_name @item.last_name (@item.emp_no)</td>
                 <td>@item.salary.ToString("C", CultureInfo.GetCultureInfo("en-US"))</td>
-                <td>@item.from_date.ToString("dd/MM/yyyy")</td>
+                <td>@item.from_date</td>
                 <td>
                     @if (item.to_date.HasValue)
                     {

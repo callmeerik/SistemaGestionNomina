@@ -1,9 +1,10 @@
-﻿using System;
+﻿using SistemaGestionNomina.Models;
+using System;
 using System.Collections.Generic;
-using System.Web.Mvc;
-using SistemaGestionNomina.Models;
-using System.Data.SqlClient;
 using System.Configuration;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Web.Mvc;
 
 namespace SistemaGestionNomina.Controllers
 {
@@ -12,14 +13,14 @@ namespace SistemaGestionNomina.Controllers
         private readonly string connectionString = ConfigurationManager.ConnectionStrings["Cnn"].ConnectionString;
 
         // ✅ GET: Salarios (lista de empleados con salario actual)
-        public ActionResult Index()
+        public ActionResult Index(int pagina = 1, int registrosPorPagina = 10)
         {
             var empleados = new List<EmpleadoSalarioActual>();
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
-                SqlCommand cmd = new SqlCommand("SELECT * FROM VW_EmpleadosSalarioActual", conn);
+                SqlCommand cmd = new SqlCommand("SELECT * FROM VW_EmpleadosSalarioActual ORDER BY emp_no", conn);
                 SqlDataReader reader = cmd.ExecuteReader();
 
                 while (reader.Read())
@@ -32,13 +33,21 @@ namespace SistemaGestionNomina.Controllers
                         last_name = reader["last_name"].ToString(),
                         hire_date = Convert.ToDateTime(reader["hire_date"]),
                         salary = Convert.ToInt64(reader["salary"]),
-                        from_date = Convert.ToDateTime(reader["from_date"]),
+                        from_date = reader["from_date"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(reader["from_date"]),
                         to_date = reader["to_date"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(reader["to_date"])
                     });
                 }
             }
 
-            return View(empleados); // 👈 Vista recibe la lista
+            // Paginación con Skip y Take
+            int totalRegistros = empleados.Count;
+            var empleadosPagina = empleados.Skip((pagina - 1) * registrosPorPagina).Take(registrosPorPagina).ToList();
+
+            ViewBag.PaginaActual = pagina;
+            ViewBag.TotalPaginas = (int)Math.Ceiling((double)totalRegistros / registrosPorPagina);
+
+            return View(empleadosPagina);
+        
         }
 
         // ✅ GET: Historial de un empleado
@@ -100,7 +109,7 @@ namespace SistemaGestionNomina.Controllers
 
         // POST: Guardar el salario
         [HttpPost]
-        public ActionResult AsignarSalario(int emp_no, decimal salario)
+        public ActionResult AsignarSalario(int emp_no, long new_salary)
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
@@ -109,7 +118,8 @@ namespace SistemaGestionNomina.Controllers
                 cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
                 cmd.Parameters.AddWithValue("@emp_no", emp_no);
-                cmd.Parameters.AddWithValue("@nuevo_salario", salario);
+                cmd.Parameters.AddWithValue("@new_salary", new_salary);
+                cmd.Parameters.AddWithValue("@changed_by", "usuario");
 
                 cmd.ExecuteNonQuery();
             }
