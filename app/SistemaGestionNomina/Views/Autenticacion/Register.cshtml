@@ -1,0 +1,74 @@
+﻿@model SistemaGestionNomina.Models.Empleados
+
+@{
+    ViewBag.Title = "Registro de Usuario";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+    <div class="card shadow-lg p-4" style="width: 500px; border-radius: 15px;">
+        <h3 class="text-center mb-4">Registro de Usuario</h3>
+
+        @using (Html.BeginForm("Register", "Autenticacion", FormMethod.Post, new { @class = "needs-validation", novalidate = "novalidate" }))
+        {
+            <div class="form-group mb-3">
+                <label for="ci" class="form-label">Cédula</label>
+                @Html.TextBoxFor(m => m.ci, new { @class = "form-control", placeholder = "Ingrese su cédula", required = "required" })
+                @Html.ValidationMessageFor(m => m.ci, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="birth_date" class="form-label">Fecha de nacimiento</label>
+                @Html.TextBoxFor(m => m.birth_date, new { @class = "form-control", type = "date", required = "required" })
+                @Html.ValidationMessageFor(m => m.birth_date, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="first_name" class="form-label">Nombre</label>
+                @Html.TextBoxFor(m => m.first_name, new { @class = "form-control", placeholder = "Ingrese su nombre", required = "required" })
+                @Html.ValidationMessageFor(m => m.first_name, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="last_name" class="form-label">Apellido</label>
+                @Html.TextBoxFor(m => m.last_name, new { @class = "form-control", placeholder = "Ingrese su apellido", required = "required" })
+                @Html.ValidationMessageFor(m => m.last_name, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="correo" class="form-label">Correo</label>
+                @Html.TextBoxFor(m => m.correo, new { @class = "form-control", placeholder = "Ingrese su correo", type = "email", required = "required" })
+                @Html.ValidationMessageFor(m => m.correo, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="gender" class="form-label">Género</label>
+                @Html.DropDownListFor(m => m.gender,
+                         new SelectList(new[] {
+                        new { Value = "M", Text = "Masculino" },
+                        new { Value = "F", Text = "Femenino" }
+                         }, "Value", "Text"),
+                         "-- Seleccione --",
+                         new { @class = "form-control", required = "required" })
+                @Html.ValidationMessageFor(m => m.gender, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group mb-4">
+                <label for="clave" class="form-label">Contraseña</label>
+                @Html.PasswordFor(m => m.clave, new { @class = "form-control", placeholder = "Ingrese su contraseña", required = "required" })
+                @Html.ValidationMessageFor(m => m.clave, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-success btn-block">Registrarse</button>
+            </div>
+        }
+
+        @if (ViewBag.Mensaje != null)
+        {
+            <div class="alert alert-success mt-3 text-center">
+                @ViewBag.Mensaje
+            </div>
+        }
+    </div>
+</div>

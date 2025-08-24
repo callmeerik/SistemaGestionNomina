@@ -123,19 +123,20 @@
     <Compile Include="Controllers\AuditoriaSalariosController.cs" />
     <Compile Include="Controllers\AutenticacionController.cs" />
     <Compile Include="Controllers\CargosController.cs" />
+    <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\DepartamentosController.cs" />
     <Compile Include="Controllers\EmpleadosController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\SalariosController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Filters\AuthorizeRoleAttribute.cs" />
     <Compile Include="Models\AuditoriaSalarios.cs" />
     <Compile Include="Models\Cargos.cs" />
+    <Compile Include="Models\Usuario.cs" />
+    <Compile Include="Models\Dashboard.cs" />
     <Compile Include="Models\Departamentos.cs" />
     <Compile Include="Models\Empleados.cs" />
-    <Compile Include="Models\Salarios.cs" />
-    <Compile Include="Models\Usuarios.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -188,17 +189,24 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+
     <Content Include="Views\Salarios\Index.cshtml" />
     <Content Include="Views\Salarios\Historial.cshtml" />
     <Content Include="Views\Salarios\AsignarSalario.cshtml" />
     <Content Include="Views\AuditoriaSalarios\Index.cshtml" />
+
+    <Content Include="Views\Autenticacion\Login.cshtml" />
+    <Content Include="Views\Autenticacion\Register.cshtml" />
+    <Content Include="Views\Dashboard\Index.cshtml" />
+    <Content Include="Views\Empleados\Index.cshtml" />
+    <Content Include="Views\Empleados\EditarEmpleado.cshtml" />
+    <Content Include="Views\Empleados\CrearEmpleado.cshtml" />
+    <Content Include="Views\Departamentos\Departamento.cshtml" />
+
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Autenticacion\" />
     <Folder Include="Views\Cargos\" />
-    <Folder Include="Views\Departamentos\" />
-    <Folder Include="Views\Empleados\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />

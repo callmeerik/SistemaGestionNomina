@@ -41,7 +41,7 @@ WHERE s.rn = 1
 GO
 
 /*====================================
-�		STORED PROCEDURES
+		STORED PROCEDURES
 =====================================*/
 CREATE OR ALTER PROCEDURE sp_departmentInformation 
 AS
@@ -205,7 +205,7 @@ select * from salaries where emp_no = 31
 select * from Log_AuditoriaSalarios
 Go
 
-
+/*
 -- Procedure para Autenticacion de usuarios
 -- Procedure de autenticacion
 CREATE OR ALTER PROCEDURE sp_userAuthentication
@@ -251,6 +251,9 @@ go
 select * from employees
 go
 
+
+*/
+/*
 --==========================================
 -- Procedure ingresar empleado y usuarios
 --==========================================
@@ -310,16 +313,17 @@ END;
 GO
 
 declare @mensaje varchar(100)
-exec sp_insertEmployee '1245763307', '12/09/2001', 'Roberto', 'Borja', 
+exec sp_insertEmployee '1245763307', '2001-09-12', 'Roberto', 'Borja', 
 				'robert@correo.com', 'M', 'rovert3', @mensaje output
 select @mensaje
 
 go
+*/
 
 -- procedure para lista todos los empleados
 CREATE OR ALTER PROCEDURE sp_getEmployees
-    @query NVARCHAR(100) = NULL,
-    @estado NVARCHAR(20) = 'Todos'
+    @query VARCHAR(100) = NULL,
+    @estado VARCHAR(20) = 'Todos'
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -409,6 +413,7 @@ BEGIN
 END
 GO
 
+<<<<<<< HEAD
 -------------
 ---listar todos los empleados consu cargo actual--
 ---------
@@ -446,10 +451,123 @@ CREATE OR ALTER PROCEDURE sp_assignTitle
     @emp_no INT,
     @title VARCHAR(50),
     @message NVARCHAR(200) OUTPUT
+=======
+<<<<<<< HEAD
+
+
+
+
+
+
+
+
+
+
+-- Store procedure para Login
+-- CREACION DE AUTENTICACION
+CREATE OR ALTER PROCEDURE sp_userAuthentication
+    @usuario nvarchar(50),
+    @clave nvarchar(64),
+    @message nvarchar(100) OUTPUT
+AS
+BEGIN
+    -- Verificar si el usuario existe
+    IF NOT EXISTS (
+        SELECT 1 
+        FROM users u
+        WHERE u.usuario = @usuario
+    )
+    BEGIN
+        SET @message = 'El usuario ingresado no existe en el sistema';
+    END
+    ELSE
+    BEGIN
+        -- Verificar si la clave coincide con el usuario
+        IF NOT EXISTS (
+            SELECT 1
+            FROM users u
+            WHERE u.usuario = @usuario
+              AND u.clave = @clave
+        )
+        BEGIN
+            SET @message = 'El password es incorrecto';
+        END
+        ELSE
+        BEGIN
+            -- Autenticación exitosa
+            SET @message = 'Autenticacion exitosa';
+
+            SELECT 
+                u.usuario, 
+                u.clave,
+                u.rol
+            FROM users u
+            WHERE u.usuario = @usuario
+              AND u.clave = @clave;
+        END
+    END
+END
+GO
+
+DECLARE @mensajeSalida varchar(100);
+
+EXEC sp_userAuthentication
+    @usuario = 'lserrano',
+    @clave = 'usu2013',
+    @message = @mensajeSalida OUTPUT;
+
+SELECT @mensajeSalida AS Resultado;
+
+-- Store procedure para Registro
+
+
+USE nominaDB
+GO
+
+CREATE OR ALTER PROCEDURE sp_insertEmployee
+    @ci VARCHAR(10),
+    @birth_date DATE,           -- Cambiado a DATE
+=======
+-- Procedure para actualizar estado de empleado
+CREATE OR ALTER PROCEDURE sp_updateEmployeeState
+    @emp_no INT
+AS
+BEGIN
+    UPDATE employees
+    SET is_active = CASE WHEN is_active = 1 THEN 0 ELSE 1 END
+    WHERE emp_no = @emp_no;
+END
+GO
+
+-- procedure para obtener empleados por emp_no
+CREATE OR ALTER PROCEDURE sp_getEmployeeById
+    @emp_no INT
+AS
+BEGIN
+    SELECT emp_no, ci, first_name, last_name, correo, gender, birth_date, hire_date, is_active
+    FROM employees
+    WHERE emp_no = @emp_no;
+END
+GO
+
+--- procedure para actualizar datos del empleado
+CREATE OR ALTER PROCEDURE sp_UpdateEmployee
+    @emp_no INT,
+    @ci VARCHAR(10),
+>>>>>>> feature/empleados
+    @first_name VARCHAR(50),
+    @last_name VARCHAR(50),
+    @correo VARCHAR(100),
+    @gender CHAR(1),
+<<<<<<< HEAD
+    @clave VARCHAR(64),
+    @mensaje NVARCHAR(200) OUTPUT
+>>>>>>> develop
 AS
 BEGIN
     SET NOCOUNT ON;
 
+<<<<<<< HEAD
     -- Validar que el empleado exista
     IF NOT EXISTS (SELECT 1 FROM employees WHERE emp_no = @emp_no)
     BEGIN
@@ -511,3 +629,76 @@ WHERE ISDATE(from_date) = 0
 
 select* from employees
 ------
+=======
+    -- Verificar duplicado de CI
+    IF EXISTS (SELECT 1 FROM employees WHERE ci = @ci)
+    BEGIN
+        SET @mensaje = 'El número de cédula ya existe en la base de datos.';
+        RETURN;
+    END;
+
+    -- Verificar duplicado de correo
+    IF EXISTS (SELECT 1 FROM employees WHERE correo = @correo)
+    BEGIN
+        SET @mensaje = 'El correo ya existe en la base de datos.';
+        RETURN;
+    END;
+
+    -- Inserción de empleado
+    INSERT INTO employees (ci, birth_date, first_name, last_name, gender, hire_date, correo)
+    VALUES (
+        @ci,
+        @birth_date,
+        @first_name,
+        @last_name,
+        @gender,
+        GETDATE(),     -- Fecha actual como DATE
+        @correo
+    );
+
+    -- Obtener ID de empleado recién insertado
+    DECLARE @emp_no INT = SCOPE_IDENTITY();
+
+    -- Generación de usuario automático
+    DECLARE @usr VARCHAR(40);
+    SET @usr = LOWER(LEFT(@first_name, 1) + @last_name);
+
+    -- Insertar usuario
+    INSERT INTO users (emp_no, usuario, clave)
+    VALUES (@emp_no, @usr, @clave);
+
+    -- Mensaje de éxito
+    SET @mensaje = 'Empleado y usuario registrados correctamente.';
+END;
+GO
+
+-- Ejemplo de ejecución
+DECLARE @mensajeSalida NVARCHAR(200);
+
+EXEC sp_insertEmployee 
+    @ci = '1212363307', 
+    @birth_date = '2001-09-12',  -- Ya como DATE
+    @first_name = 'Roberto', 
+    @last_name = 'Borja', 
+    @correo = 'robesdarasfdst@correo.com', 
+    @gender = 'M', 
+    @clave = 'usu2asfdsasfafasfasdsafsad030', 
+    @mensaje = @mensajeSalida OUTPUT;
+
+SELECT @mensajeSalida AS Resultado;
+=======
+    @birth_date VARCHAR(20)
+AS
+BEGIN
+    UPDATE employees
+    SET ci = @ci,
+        first_name = @first_name,
+        last_name = @last_name,
+        correo = @correo,
+        gender = @gender,
+        birth_date = @birth_date
+    WHERE emp_no = @emp_no;
+END
+GO
+>>>>>>> feature/empleados
+>>>>>>> develop

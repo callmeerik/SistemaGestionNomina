@@ -1,0 +1,272 @@
+﻿
+/* --------- Tokens básicos --------- */
+:root {
+    --sidebar-w: 280px;
+    --gap: 1rem;
+    --radius: 12px;
+    --surface: #f8f9fa; /* gris claro Bootstrap-ish */
+    --panel: #ffffff;
+    --border: #dee2e6;
+    --text: #212529;
+    --muted: #6c757d;
+    --primary: #0d6efd;
+    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.08);
+    /* Altura aproximada del navbar superior. 
+     Si no tienes navbar, pon 0px aquí. */
+    --header-h: 56px;
+}
+
+/* --------- Composición de la app --------- */
+.app {
+    display: flex;
+    gap: var(--gap);
+    min-height: calc(100dvh - var(--header-h));
+}
+
+/* Sidebar fijo/“inmovilizado” a la izquierda */
+.sidebar {
+    position: sticky;
+    top: calc(var(--header-h) + 0px);
+    align-self: flex-start;
+    width: var(--sidebar-w);
+    min-height: calc(100dvh - var(--header-h));
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 1rem;
+    border-radius: 0;
+}
+
+    .sidebar h3 {
+        font-size: 1.1rem;
+        margin: 0 0 .75rem 0;
+        color: var(--text);
+    }
+
+/* Navegación vertical */
+.nav {
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+}
+
+    .nav a {
+        display: block;
+        padding: .5rem .75rem;
+        border-radius: .5rem;
+        text-decoration: none;
+        color: var(--text);
+        border: 1px solid transparent;
+        transition: background-color .2s ease, border-color .2s ease, color .2s ease;
+    }
+
+        .nav a:hover,
+        .nav a:focus {
+            background: #e9ecef;
+            border-color: var(--border);
+            outline: none;
+        }
+
+        .nav a:active {
+            background: #e2e6ea;
+        }
+
+/* --------- Contenido a la derecha --------- */
+.content {
+    flex: 1;
+    min-width: 0; /* evita overflow con tablas */
+    padding: 1rem 0;
+}
+
+/* Secciones (paneles) */
+.section {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow);
+    scroll-margin-top: calc(var(--header-h) + 16px); /* anclas no quedan ocultas por el navbar */
+}
+
+    .section > h3 {
+        margin-top: 0;
+        margin-bottom: .75rem;
+    }
+
+/* Texto atenuado */
+.muted {
+    color: var(--muted);
+}
+
+/* --------- Formularios --------- */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    max-width: 640px;
+}
+
+.form-row {
+    display: grid;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="date"],
+select,
+textarea {
+    display: block;
+    width: 100%;
+    padding: .5rem .75rem;
+    border: 1px solid var(--border);
+    border-radius: .5rem;
+    outline: none;
+    background: #fff;
+    color: var(--text);
+}
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+        border-color: #b6d4fe;
+        box-shadow: 0 0 0 .2rem rgba(13,110,253,.15);
+    }
+
+/* Botones estilo Bootstrap-ish */
+.actions {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+}
+
+button,
+.button {
+    display: inline-block;
+    padding: .45rem .9rem;
+    border-radius: .5rem;
+    border: 1px solid transparent;
+    background: var(--primary);
+    color: #fff;
+    font-weight: 500;
+    cursor: pointer;
+    transition: filter .2s ease, transform .02s ease;
+}
+
+    button:hover,
+    .button:hover {
+        filter: brightness(0.96);
+    }
+
+    button:active,
+    .button:active {
+        transform: translateY(1px);
+    }
+
+    button[disabled] {
+        opacity: .6;
+        cursor: not-allowed;
+    }
+
+    /* Variante “ghost” opcional */
+    button.ghost {
+        background: transparent;
+        color: var(--text);
+        border-color: var(--border);
+    }
+
+        button.ghost:hover {
+            background: #f1f3f5;
+        }
+
+/* --------- Tablas / DataTables --------- */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .table th,
+    .table td {
+        border: 1px solid var(--border);
+        padding: .55rem .6rem;
+        vertical-align: middle;
+    }
+
+    .table thead th {
+        background: #f8f9fa;
+        font-weight: 600;
+    }
+
+/* Cuando DataTables envuelve la tabla, evita overflow lateral */
+.dataTables_wrapper {
+    width: 100%;
+}
+
+    .dataTables_wrapper .dataTables_scroll {
+        border: 1px solid var(--border);
+        border-radius: .5rem;
+    }
+
+/* Botonera de DataTables separada del título */
+.dt-buttons {
+    margin-bottom: .5rem;
+}
+
+/* --------- Responsivo --------- */
+/* En pantallas medianas/pequeñas, el sidebar pasa arriba
+   y el contenido abajo, manteniendo sticky en top */
+@media (max-width: 991.98px) {
+    .app {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        position: sticky;
+        top: 0; /* si tu navbar ocupa espacio, puedes mantener var(--header-h) */
+        width: 100%;
+        min-height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        border-radius: 0 0 var(--radius) var(--radius);
+        background: var(--surface);
+        z-index: 10;
+    }
+
+    .nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: .5rem;
+    }
+
+        .nav a {
+            padding: .4rem .6rem;
+            border-radius: 999px; /* chips */
+        }
+}
+
+/* --------- Accesibilidad y motion --------- */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/*(Opcional) Toque visual para la activa*/
+.section.active {
+    outline: 2px solid rgba(13,110,253,.35);
+}
+
+/*regla para asegurarte que hidden realmente oculta*/
+
+.section[hidden] {
+    display: none !important;
+}
+
+/*resaltar el tab activo del menú:*/
+.nav a.active {
+    background: #e9ecef;
+    border: 1px solid #dee2e6;
+    border-radius: .5rem;
+}
