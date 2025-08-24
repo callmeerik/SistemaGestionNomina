@@ -1,0 +1,36 @@
+@model List<SistemaGestionNomina.Models.EmpleadoSalarioActual>
+@using System.Globalization;
+
+<h2>Salarios actuales</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Empleado</th>
+            <th>CI</th>
+            <th>Salario</th>
+            <th>Desde</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var e in Model)
+        {
+            <tr>
+                <td>@e.first_name @e.last_name</td>
+                <td>@e.ci</td>
+                <td>@e.salary.ToString("C", CultureInfo.GetCultureInfo("en-US"))</td>
+                <td>@e.from_date.ToShortDateString()</td>
+                <td>
+                    <a href="@Url.Action("Historial", "Salarios", new { id = e.emp_no })"
+                       class="btn btn-sm btn-info">
+                        Ver historial
+                    </a>
+                    <a href="@Url.Action("AsignarSalario", "Salarios", new { emp_no = e.emp_no })"
+                       class="btn btn-sm btn-warning">
+                        Asignar salario
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

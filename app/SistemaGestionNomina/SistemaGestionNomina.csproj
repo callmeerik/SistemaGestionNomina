@@ -187,7 +187,9 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Salarios\Salario.cshtml" />
+    <Content Include="Views\Salarios\Index.cshtml" />
+    <Content Include="Views\Salarios\Historial.cshtml" />
+    <Content Include="Views\Salarios\AsignarSalario.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
