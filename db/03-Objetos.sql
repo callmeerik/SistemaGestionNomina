@@ -202,22 +202,17 @@ BEGIN
     SELECT 
         title,
         from_date,
+        to_date,
         CASE 
             WHEN to_date IS NULL THEN 'Vigente'
-            ELSE to_date
-        END AS to_date,
-        DATEDIFF(MONTH, 
-                 TRY_CONVERT(DATETIME, from_date), 
-                 ISNULL(TRY_CONVERT(DATETIME, to_date), GETDATE())
-                ) AS meses_duracion
+            ELSE CONVERT(VARCHAR(10), to_date, 120)
+        END AS estado,
+        DATEDIFF(MONTH, from_date, ISNULL(to_date, GETDATE())) AS meses_duracion
     FROM titles
     WHERE emp_no = @emp_no
-    ORDER BY 
-        CASE WHEN TRY_CONVERT(DATETIME, from_date) IS NULL THEN 1 ELSE 0 END, 
-        TRY_CONVERT(DATETIME, from_date);
+    ORDER BY from_date;
 END
-Go
-
+GO
 
 /*
 =======================================================
