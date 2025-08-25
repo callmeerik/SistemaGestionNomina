@@ -1,0 +1,421 @@
+﻿
+@using System.Data @*Importar librerías para la vista y manejo de menus*@
+@{
+    ViewBag.Title = "Departamento";
+    var dt_consultar = ViewBag.Departamentos as DataTable; /*// DataTable que contiene los departamentos*/
+    var dt_historial = ViewBag.Historial as DataTable; /*// DataTable que contiene el historial de movimientos*/
+    var dt_asignar = ViewBag.Asignar as DataTable;
+    //var dt_asignarESD = ViewBag.AsignarESD as DataTable;
+    var dt_asignarESD = ViewBag.AsignarESD as System.Data.DataTable;
+    var ddl = ViewBag.DepartamentosDDL as List<SelectListItem>;
+
+    var selectedDept = ViewBag.DeptNoActual as int?;
+    //var disabled = ViewBag.EmpNo == null ? "disabled" : null;
+
+    var attrsAsignar = new Dictionary<string, object> {
+        { "class", "form-select" },
+        { "required", "required" }
+    };
+    if (ViewBag.EmpNo == null) { attrsAsignar.Add("disabled", "disabled"); }
+}
+
+@section styles { @*/para realizar filtros, busquedas , exportar a .xlsx, cvs, pdf, etc.*/*@
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css" />
+<link rel="stylesheet" href="~/Content/css/Departamento.css" /> @*enlace al archivo css para la vista de departamento*@
+}
+
+
+<section class="app">
+
+
+    <!-- Menú lateral Agregar, Consultar, Asignar, Historial -->
+    <aside class="sidebar" aria-label="Menú de secciones">
+        <h3 id="menuTitle">Gestor de Departamentos</h3>
+        <nav class="nav" aria-labelledby="menuTitle">
+            <a href="@($"{Url.Action("Agregar","Departamentos")}#agregar")">Crear Departamentos</a>
+            <a href="@($"{Url.Action("Consultar","Departamentos")}#consultar")">Consultar Departamentos</a>
+            <a href="@($"{Url.Action("AsignarESD","Departamentos")}#asignarESD")">Empleados sin Asignación</a>
+            <a href="@($"{Url.Action("Asignar","Departamentos")}#asignar")">Asignaciones entre Departamentos</a>
+            <a href="@($"{Url.Action("Historial","Departamentos")}#historial")">Historial de Asignaciones</a>
+        </nav>
+
+        <!-- Descripciones invisibles para accesibilidad -->
+        <p id="agregarDesc" class="muted" hidden>Crear un nuevo departamento</p>
+        <p id="consultarDesc" class="muted" hidden>Lista de departamentos existentes</p>
+        <p id="asignarDescESD" class="muted" hidden>Listado de Empleados sin Asignación</p>
+        <p id="asignarDesc" class="muted" hidden>Cambio de Empleados entre Departamentos</p>
+        <p id="historialDesc" class="muted" hidden>Ver movimientos entre departamentos</p>
+    </aside>
+
+
+
+
+    <!-- Contenido -->
+    <main class="content">
+
+        <!-- Agregar -->
+        <section id="agregar" class="section" aria-labelledby="agregarTitle" hidden>
+
+            <h3 id="agregarTitle">Cree un nuevo departamento</h3>
+            @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+            <form action="@Url.Action("Agregar","Departamentos")" method="post" novalidate>
+                @*// para redirecionar a la la accion correspondiente *@
+                @Html.AntiForgeryToken()
+                @*<fieldset id="fsAgregar" disabled>*@
+                <div class="form-grid">
+                    <div class="form-row">
+                        @*<label for="nombreDepar">nombre del departamento</label>*@
+                        <input id="nombreDepar"
+                               name="nombreDepar"
+                               type="text"
+                               maxlength="50"
+                               required
+                               placeholder="Sistemas, Marketing, Recursos Humanos, etc." />
+                    </div>
+
+                    <div class="actions">
+                        <button type="submit">Enviar</button>
+
+
+                    </div>
+                </div>
+                @*</fieldset>*@
+            </form>
+        </section>
+
+
+
+
+
+
+
+
+
+
+        <!-- Consultar -->
+        <section id="consultar" class="section" aria-labelledby="consultarTitle" hidden>
+            <h3 id="consultarTitle">Lista de departamentos existentes</h3>
+            @* Bloque de tabla basado en DataTable *@
+            @if (dt_consultar != null && dt_consultar.Rows.Count > 0)
+            {
+                <table id="tablaDeptos" class="table dt-auto" data-title="Departamentos" style="width:100%">
+                    @*para realizar filtros, busquedas , exportar a .xlsx, cvs, pdf, etc.*@
+
+                    <thead>
+                        <tr>
+                            @foreach (System.Data.DataColumn col in dt_consultar.Columns)
+                            {
+                                <th>@col.ColumnName</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (System.Data.DataRow row in dt_consultar.Rows)
+                        {
+                            <tr>
+                                @foreach (var val in row.ItemArray)
+                                {
+                                    <td>@(val is DateTime dt ? dt.ToString("dd/MM/yyyy") : val)</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="muted">No hay departamentos para mostrar.</p>
+            }
+
+
+        </section>
+
+
+
+        <!-- AsignarESD -->
+        <section id="asignarESD" class="section" aria-labelledby="asignarESDTitle" hidden>
+            <h3 id="asignarESDTitle">Lista de empleados sin departamentos asignados</h3>
+            @if (dt_asignarESD != null && dt_asignarESD.Rows.Count > 0)
+            {
+                <table id="tablaESD" class="table dt-auto" data-title="EmpleadosSD" style="width:100%">
+                    <thead>
+                        <tr>
+                            @foreach (System.Data.DataColumn col in dt_asignarESD.Columns)
+                            {
+                                <th>@col.ColumnName</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (System.Data.DataRow row in dt_asignarESD.Rows)
+                        {
+                            <tr>
+                                @foreach (System.Data.DataColumn col in dt_asignarESD.Columns)
+                                {
+                                    if (col.ColumnName.Equals("Id_Departamento", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        <td>
+                                            @using (Html.BeginForm("AsignarDesdeESD", "Departamentos", FormMethod.Post, new { @class = "inline-form" }))
+                                            {
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="emp_no" value="@row["Id"]" />
+
+                                                <div class="form-row">
+                                                    @Html.DropDownList(
+                                                      "dept_no_nuevo",
+                                                      new SelectList(ddl ?? new List<SelectListItem>(), "Value", "Text", selectedDept),
+                                                      "-- Seleccione departamento --",
+                                                      new { @class = "form-select", required = "required" }
+                                                    )
+                                                </div>
+
+                                                <button type="submit" class="btn btn-sm">Asignar</button>
+                                            }
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>@(row[col] is DateTime d ? d.ToString("dd/MM/yyyy") : row[col])</td>
+                                    }
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="muted">No hay empleados sin asignación.</p>
+            }
+
+            @if (TempData["ok"] != null)
+            {<div class="alert alert-success">@TempData["ok"]</div>}
+            @if (TempData["err"] != null)
+            {<div class="alert alert-danger">@TempData["err"]</div>}
+
+        </section>
+
+
+
+
+
+
+
+        <!-- Asignar -->
+        <section id="asignar" class="section" aria-labelledby="asignarTitle" hidden>
+            <h3 id="asignarTitle">Asignar departamento a empleado</h3>
+            <p class="muted">Formulario de asignación de empleados.</p>
+            @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+            <form action="@Url.Action("Asignar","Departamentos")" method="post" novalidate>
+                @Html.AntiForgeryToken()
+
+                <!-- Campo visible para CONSULTAR -->
+                <div class="form-row">
+                    <input id="cedulaEmpl"
+                           name="cedulaEmpl"
+                           type="text"
+                           maxlength="50"
+                           required
+                           value="@(ViewBag.CedulaEmpl ?? "")"
+                           placeholder="Cédula del empleado" />
+                </div>
+
+                <!-- Campo visible para ASIGNAR -->
+                <div class="form-row">
+                    @Html.DropDownList(
+                      "dept_no_nuevo",
+                      new SelectList(ddl ?? new List<SelectListItem>(), "Value", "Text", selectedDept),
+                      "-- Seleccione departamento --",
+                      attrsAsignar
+                    )
+                </div>
+
+                <!-- Hidden que se rellenan tras CONSULTAR -->
+                <input type="hidden" name="emp_no" value="@ViewBag.EmpNo" />
+                <input type="hidden" name="dept_no_actual" value="@ViewBag.DeptNoActual" />
+
+                <div class="actions">
+                    <button type="submit" name="accion" value="consultar">Consultar</button>
+                    <button type="submit" name="accion" value="asignar" @(ViewBag.EmpNo == null ? "disabled" : null)>Asignar</button>
+                </div>
+                @*</fieldset>*@
+            </form>
+
+            @* Tabla simple de resultados de la consulta *@
+
+            @if (dt_asignar != null && dt_asignar.Rows.Count > 0)
+            {
+                <table id="tablaAsignar" class="table" style="width:100%">
+                    <thead>
+                        <tr>
+                            @foreach (System.Data.DataColumn col in dt_asignar.Columns)
+                            {
+                                <th>@col.ColumnName</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (System.Data.DataRow row in dt_asignar.Rows)
+                        {
+                            <tr>
+                                @foreach (var val in row.ItemArray)
+                                {
+                                    <td>@(val is DateTime dt ? dt.ToString("dd/MM/yyyy") : val)</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="muted">No hay empleados para mostrar.</p>
+            }
+        </section>
+
+
+
+
+
+
+
+
+
+
+
+        <!-- Historial -->
+        <section id="historial" class="section" aria-labelledby="historialTitle" hidden>
+            <h3 id="historialTitle">Historial de movimientos</h3>
+
+            @* Bloque de tabla basado en DataTable *@
+            @if (dt_historial != null && dt_historial.Rows.Count > 0)
+            {
+                @*<table class="table">*@
+                <table id="tablaHistorial" class="table dt-auto" data-title="Historial de movimientos" style="width:100%">
+                    @*para realizar filtros, busquedas , exportar a .xlsx, cvs, pdf, etc.*@
+
+                    <thead>
+                        <tr>
+                            @foreach (System.Data.DataColumn col in dt_historial.Columns)
+                            {
+                                <th>@col.ColumnName</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (System.Data.DataRow row in dt_historial.Rows)
+                        {
+                            <tr>
+                                @foreach (var val in row.ItemArray)
+                                {
+                                    <td>@(val is DateTime dt ? dt.ToString("dd/MM/yyyy") : val)</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="muted">Historial de movimientos del empleado entre áreas o departamentos.</p>
+            }
+
+        </section>
+    </main>
+</section>
+
+
+
+
+
+
+@*Script para realizar filtros, busquedas , exportar a .xlsx, cvs, pdf, etc.*@
+@section scripts {
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+
+    <div id="page-state" data-active="@ViewBag.ActiveTab"></div>
+    <script>
+        $(function () {
+            $('table.dt-auto').each(function () {
+                var $t = $(this);
+                $t.DataTable({
+                    responsive: true,
+                    scrollX: true,
+                    dom: 'Bfrtip',
+                    buttons: [
+                        { extend: 'copyHtml5', title: $t.data('title') || document.title },
+                        { extend: 'excelHtml5', title: $t.data('title') || document.title },
+                        { extend: 'csvHtml5', title: $t.data('title') || document.title },
+                        { extend: 'pdfHtml5', title: $t.data('title') || document.title, orientation: 'landscape', pageSize: 'A4' },
+                        { extend: 'print', title: $t.data('title') || document.title }
+                    ],
+                    language: { url: 'https://cdn.datatables.net/plug-ins/1.13.8/i18n/es-ES.json' }
+                });
+            });
+        });
+
+        var SECTIONS = ['agregar', 'consultar', 'asignarESD', 'asignar', 'historial'];
+        /*var DEFAULT_HASH = '#asignar'; // cámbialo si quieres otro por defecto*/
+        var DEFAULT_HASH = (function () {
+            var activeFromServer = (document.getElementById('page-state')?.dataset.active || '').toLowerCase();
+            if (SECTIONS.includes(activeFromServer)) return '#' + activeFromServer;
+            /*return '#consultar';*/ // fallback si no hay ActiveTab
+        })();
+
+
+        function normalizeHash(h) {
+            if (!h) return DEFAULT_HASH;
+            // Acepta solo ids válidos
+            var clean = h.replace('#', '');
+            return SECTIONS.includes(clean) ? ('#' + clean) : DEFAULT_HASH;
+        }
+
+        function showOnly(targetHash) {
+            var target = normalizeHash(targetHash);
+
+            // Mostrar/ocultar secciones
+            SECTIONS.forEach(function (id) {
+                var el = document.getElementById(id);
+                if (!el) return;
+                var active = ('#' + id) === target;
+                el.hidden = !active;
+                el.setAttribute('aria-hidden', (!active).toString());
+                el.classList.toggle('active', active);
+            });
+
+            // Marcar link activo en el menú
+            var links = document.querySelectorAll('.nav a');
+            links.forEach(function (a) {
+                var href = a.getAttribute('href') || '';
+                var hash = href.substring(href.indexOf('#'));
+                a.classList.toggle('active', hash === target);
+            });
+
+            // Accesibilidad: foco en la sección activa (opcional)
+            var activeEl = document.querySelector(target);
+            if (activeEl) {
+                if (!activeEl.hasAttribute('tabindex')) activeEl.setAttribute('tabindex', '-1');
+                activeEl.focus({ preventScroll: true });
+                activeEl.scrollIntoView({ block: 'start', behavior: 'smooth' });
+            }
+        }
+
+        window.addEventListener('hashchange', function () {
+            showOnly(window.location.hash);
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            showOnly(window.location.hash);
+        });
+
+
+    </script>
+}
+

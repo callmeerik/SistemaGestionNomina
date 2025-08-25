@@ -133,7 +133,7 @@ namespace SistemaGestionNomina.Controllers
             return RedirectToAction("Login", "Autenticacion");
         }
 
-        private string HashPassword(string password)
+        public string HashPassword(string password)
         {
             using (SHA256 sha256 = SHA256.Create())
             {

@@ -1,0 +1,70 @@
+﻿
+@using System.Globalization
+
+@model SistemaGestionNomina.Models.Dashboard
+
+<div class="container mt-4">
+    <h2 class="mb-4">Dashboard Nómina</h2>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Empleados</h5>
+                    <p class="card-text display-6">@Model.total_empleados</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Departamentos</h5>
+                    <p class="card-text display-6">@Model.total_departamentos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Promedio Salario</h5>
+                    <p class="card-text display-6">@Model.promedio_salario.ToString("C", CultureInfo.GetCultureInfo("en-US"))</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3>Distribución por Género</h3>
+    <ul class="list-group mb-3">
+        @foreach (var g in Model.genero)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                @g.Key
+                <span class="badge bg-primary rounded-pill">@g.Value</span>
+            </li>
+        }
+    </ul>
+
+    <h3>Empleados por Departamento</h3>
+    <ul class="list-group mb-3">
+        @foreach (var d in Model.empleados_dept)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                @d.Key
+                <span class="badge bg-success rounded-pill">@d.Value</span>
+            </li>
+        }
+    </ul>
+
+    <h3>Salario Promedio por Departamento</h3>
+    <ul class="list-group mb-3">
+        @foreach (var s in Model.salario_dept)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                @s.Key
+                <span class="badge bg-info rounded-pill">@s.Value.ToString("C", CultureInfo.GetCultureInfo("en-US"))</span>
+            </li>
+        }
+    </ul>
+</div>
+
+

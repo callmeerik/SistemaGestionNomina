@@ -8,33 +8,15 @@ namespace SistemaGestionNomina.Models
 {
     public class Empleados
     {
-        [Required]
-        [StringLength(10)]
+        public int emp_no { get; set; }
         public string ci { get; set; }
-
-        [Required]
-        [DataType(DataType.Date)]
-        public string birth_date { get; set; }  // Podrías usar DateTime si quieres más control
-
-        [Required]
-        [StringLength(50)]
+        public DateTime birth_date { get; set; }
         public string first_name { get; set; }
-
-        [Required]
-        [StringLength(50)]
         public string last_name { get; set; }
-
-        [Required]
-        [EmailAddress]
-        public string correo { get; set; }
-
-        [Required]
-        [RegularExpression("M|F")]
-        public string gender { get; set; }
-
-        [Required]
-        [StringLength(64)]
-        [DataType(DataType.Password)]
-        public string clave { get; set; }
+        public char gender { get; set; }
+        public DateTime hire_date { get; set; }
+        public string correo {  get; set; }
+        public bool is_active { get; set; } = true;
+        public string clave { get; set; } // clave de usuario
     }
 }
