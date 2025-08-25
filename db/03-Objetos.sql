@@ -458,16 +458,18 @@ go
 */
 
 
+
+
+
 CREATE OR ALTER PROCEDURE dbo.SPinsertDepartment
-   -- @dept_no INT,
     @nombreDepar VARCHAR(50)
 AS
 BEGIN
     INSERT INTO dbo.departments ( dept_name)
     VALUES (@nombreDepar);
-	 --VALUES (@dept_no, @dept_name);
 END
 GO
+
 
 
 
@@ -504,11 +506,58 @@ GO
 
 
 
+
+
+
+CREATE OR ALTER PROCEDURE dbo.SPgetEmpleadosSD
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT  
+        e.emp_no                                AS Id,
+        e.ci                                    AS CI,
+        e.birth_date                            AS F_Nacimiento,
+        CONCAT(e.first_name, ' ', e.last_name)  AS Nombres,
+        e.hire_date                             AS F_Ingreso,
+        e.hire_date                             AS Desde,
+        CAST(NULL AS INT)                       AS Id_Departamento
+    FROM dbo.employees e
+    WHERE e.emp_no IS NOT NULL
+      AND NOT EXISTS (
+            SELECT 1
+            FROM dbo.dept_emp d
+            WHERE d.emp_no = e.emp_no
+
+      );
+END
+GO
+
+
+
+
+
+
+
+
+CREATE OR ALTER PROCEDURE dbo.SPgetDepartmentsActivos
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT d.dept_no, d.dept_name
+    FROM dbo.departments d
+    WHERE ISNULL(d.is_active, 1) = 1
+    ORDER BY d.dept_name;
+END
+GO
+
+
+
 CREATE OR ALTER PROCEDURE dbo.SPgetAsigDepartEmpl
 @ci varchar(50)
 AS
 BEGIN
-	--Validación si ya existe departamento con el mismo nombre
 	IF  NOT EXISTS(SELECT 1 FROM dbo.employees WHERE ci = @ci)
 	BEGIN
 	RAISERROR(N'No existe empleado con ese número de cédula.',16,1);
@@ -532,9 +581,54 @@ GO
 
 
 
+
+CREATE OR ALTER PROCEDURE dbo.SPinsertDeptEmpActual
+    @emp_no  INT,
+    @dept_no INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF NOT EXISTS (SELECT 1 FROM dbo.employees WHERE emp_no = @emp_no)
+    BEGIN
+        RAISERROR('Empleado no existe.', 16, 1);
+        RETURN;
+    END
+
+    IF NOT EXISTS (SELECT 1 FROM dbo.departments WHERE dept_no = @dept_no AND ISNULL(is_active,1)=1)
+    BEGIN
+        RAISERROR('Departamento no existe o está inactivo.', 16, 1);
+        RETURN;
+    END
+    IF EXISTS (SELECT 1 FROM dbo.dept_emp WHERE emp_no = @emp_no AND to_date IS NULL)
+    BEGIN
+        RAISERROR('El empleado ya tiene una asignación activa.', 16, 1);
+        RETURN;
+    END
+
+    DECLARE @hoy DATE = CAST(GETDATE() AS DATE);
+
+    INSERT INTO dbo.dept_emp (emp_no, dept_no, from_date, to_date)
+    VALUES (@emp_no, @dept_no, @hoy, NULL);
+END
+GO
+
+
+
+
+
+--EXEC dbo.SPinsertDeptEmpActual @emp_no = 25, @dept_no = 5;
+--SELECT * FROM employees WHERE ci='1705748392'
+--SELECT * FROM dept_emp WHERE emp_no = 25
+--SELECT * FROM departments WHERE dept_no = 5
+--SELECT * FROM dbo.dept_emp WHERE emp_no = 25 AND to_date IS NOT NULL
+
+
+USE nominaDB
+
 CREATE OR ALTER PROCEDURE dbo.SPsetAsigDepartEmpl
     @emp_no          INT,
-    @dept_no         INT,
+    --@dept_no         INT,
     @dept_no_nuevo   INT
 AS
 BEGIN
@@ -548,14 +642,14 @@ BEGIN
     SELECT @dept_no_actual = d.dept_no
     FROM dbo.dept_emp AS d
     WHERE d.emp_no = @emp_no
-      AND d.to_date IS NULL;
+      AND d.to_date IS NULL;          
 
     IF @dept_no_actual IS NULL
         THROW 50001, 'El empleado no tiene una asignación vigente.', 1;
 
-    -- 2) Verificar que el dept actual coincide con el proporcionado
-    IF @dept_no_actual <> @dept_no
-        THROW 50002, 'El departamento actual no coincide con el proporcionado.', 1;
+    ------ 2) Verificar que el dept actual coincide con el proporcionado
+    --IF @dept_no_actual <> @dept_no
+    --    THROW 50002, 'El departamento actual no coincide con el proporcionado.', 1;
 
     -- 3) Evitar reasignación al mismo departamento
     IF @dept_no_nuevo = @dept_no_actual
@@ -567,7 +661,6 @@ BEGIN
         FROM dbo.dept_emp
         WHERE emp_no  = @emp_no
           AND dept_no = @dept_no_nuevo
-          AND to_date IS NULL
     )
         THROW 50004, 'Ya existe una asignación vigente al nuevo departamento.', 1;
 
@@ -593,6 +686,18 @@ BEGIN
     COMMIT TRAN;
 END
 GO
+
+
+--EXEC SPsetAsigDepartEmpl @emp_no=1, @dept_no=2, @dept_no_nuevo=3;
+
+
+
+
+--SELECT * FROM employees WHERE ci='1708913678'
+--SELECT * FROM dept_emp WHERE emp_no = 1
+--SELECT * FROM departments WHERE dept_no = 2
+--SELECT * FROM departments WHERE dept_no = 7
+--SELECT * FROM dbo.dept_emp WHERE emp_no = 1 AND to_date IS  NULL
 
 
 
