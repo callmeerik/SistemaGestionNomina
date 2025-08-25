@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.Web.Mvc;
 using SistemaGestionNomina.Models;
-using System.Security.Cryptography;
-using System.Data.SqlClient;
-using System.Data;
-using System.Configuration;
 
 
 
 namespace SistemaGestionNomina.Controllers
 {
-   
+
 
 
     public class DepartamentosController : Controller
@@ -106,33 +103,7 @@ namespace SistemaGestionNomina.Controllers
 
 
 
-        //[HttpGet]
-        //public ActionResult AsignarESD()
-        //{
-        //    var dt_asignarESD = new DataTable();
 
-        //    try
-        //    {
-        //        using (var cn = new SqlConnection(ConfigurationManager.ConnectionStrings["Cnn"].ConnectionString))
-        //        using (var da = new SqlDataAdapter("SPgetEmpleadosSD", cn)) // tu SP
-        //        {
-        //            da.SelectCommand.CommandType = CommandType.StoredProcedure;
-        //            da.Fill(dt_asignarESD);
-        //        }
-
-        //        ViewBag.AsignarESD = dt_asignarESD;      // <-- pasamos DataTable
-        //        ViewBag.ActiveTab = "asignarESD"; // para dejar activa la pestaña
-        //        Session["DeptSection"] = "asignarESD";
-        //        return View("Departamento");
-        //    }
-        //    catch (SqlException ex)
-        //    {
-        //        System.Diagnostics.Debug.WriteLine(ex);
-        //        ModelState.AddModelError("", "No se pudo consultar los empleados sin asignación de departamentos.");
-        //        ViewBag.ActiveTab = "asignarESD";
-        //        return View("Departamento");
-        //    }
-        //}
 
         [HttpGet]
         public ActionResult AsignarESD()
@@ -310,7 +281,7 @@ namespace SistemaGestionNomina.Controllers
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@emp_no", emp_no.Value);
-                        cmd.Parameters.AddWithValue("@dept_no", dept_no_actual.Value);
+                        //cmd.Parameters.AddWithValue("@dept_no", dept_no_actual.Value);
                         cmd.Parameters.AddWithValue("@dept_no_nuevo", dept_no_nuevo.Value);
                         cn.Open();
                         cmd.ExecuteNonQuery();
