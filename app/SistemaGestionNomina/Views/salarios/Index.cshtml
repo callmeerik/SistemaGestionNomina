@@ -33,11 +33,9 @@
                 <td>
                     <a href="@Url.Action("Historial", "Salarios", new { id = e.emp_no })" class="btn btn-sm btn-info">Ver historial</a>
                     <a href="@Url.Action("AsignarSalario", "Salarios", new { emp_no = e.emp_no })" class="btn btn-sm btn-warning">Asignar salario</a>
-                <td>@e.salary.ToString("C")</td>
-                <td>@e.from_date</td>
-                <td>
-                    <a href="@Url.Action("Historial", "Salarios", new { id = e.emp_no })">Ver historial</a>
+                
                 </td>
+                    
             </tr>
         }
     </tbody>
