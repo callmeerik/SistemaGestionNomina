@@ -115,6 +115,7 @@ namespace SistemaGestionNomina.Controllers
         [HttpPost]
         public ActionResult AsignarSalario(int emp_no, long new_salary)
         {
+            Usuario usuario = new Usuario();
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
@@ -123,7 +124,7 @@ namespace SistemaGestionNomina.Controllers
 
                 cmd.Parameters.AddWithValue("@emp_no", emp_no);
                 cmd.Parameters.AddWithValue("@new_salary", new_salary);
-                cmd.Parameters.AddWithValue("@changed_by", "usuario");
+                cmd.Parameters.AddWithValue("@changed_by", Session["UserName"] );
 
                 cmd.ExecuteNonQuery();
             }
