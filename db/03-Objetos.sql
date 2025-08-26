@@ -1,6 +1,8 @@
 ﻿use nominaDB
 go
 
+select * from users
+
 /*
 ===============================================
         OBJETOS AUTENTICACION
@@ -664,6 +666,7 @@ GO
 
 
 USE nominaDB
+GO
 
 CREATE OR ALTER PROCEDURE dbo.SPsetAsigDepartEmpl
     @emp_no          INT,
