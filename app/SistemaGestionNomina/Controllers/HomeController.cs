@@ -15,6 +15,7 @@ namespace SistemaGestionNomina.Controllers
             return View();
         }
 
+        [AuthorizeRole("Admin", "RRHH")]
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";
@@ -22,7 +23,7 @@ namespace SistemaGestionNomina.Controllers
             return View();
         }
 
-        [AuthorizeRole("Admin","User")]
+        [AuthorizeRole("Admin","RRHH")]
         public ActionResult Contact()
         {
             ViewBag.Message = "Your contact page.";

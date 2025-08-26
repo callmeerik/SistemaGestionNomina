@@ -111,6 +111,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AuditoriaSalariosController.cs" />
     <Compile Include="Controllers\AutenticacionController.cs" />
+    <Compile Include="Controllers\NuevoRolController.cs" />
     <Compile Include="Controllers\SalariosController.cs" />
     <Compile Include="Controllers\CargosController.cs" />
     <Compile Include="Controllers\DepartamentosController.cs" />
@@ -123,6 +124,7 @@
     </Compile>
     <Compile Include="Models\AuditoriaSalarios.cs" />
     <Compile Include="Models\Cargos.cs" />
+    <Compile Include="Models\CambiarRol.cs" />
     <Compile Include="Models\Departamentos.cs" />
     <Compile Include="Models\Empleados.cs" />
     <Compile Include="Models\Dashboard.cs" />
@@ -181,22 +183,19 @@
     <Content Include="Views\Dashboard\Index.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-
     <Content Include="Views\Salarios\Index.cshtml" />
     <Content Include="Views\Salarios\Historial.cshtml" />
     <Content Include="Views\Salarios\AsignarSalario.cshtml" />
     <Content Include="Views\AuditoriaSalarios\Index.cshtml" />
-
     <Content Include="Views\Autenticacion\Login.cshtml" />
     <Content Include="Views\Autenticacion\Register.cshtml" />
     <Content Include="Views\Dashboard\Index.cshtml" />
-
     <Content Include="Views\Empleados\Index.cshtml" />
     <Content Include="Views\Departamentos\Departamento.cs" />
     <Content Include="Views\Empleados\EditarEmpleado.cshtml" />
     <Content Include="Views\Empleados\CrearEmpleado.cshtml" />
     <Content Include="Views\Departamentos\Departamento.cshtml" />
-
+    <Content Include="Views\NuevoRol\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Cargos\Index.cshtml" />
@@ -265,7 +264,7 @@
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
-      <ErrorText>Este proyecto hace referencia a los paquetes NuGet que faltan en este equipo. Use la restauración de paquetes NuGet para descargarlos. Para obtener más información, consulte http://go.microsoft.com/fwlink/?LinkID=322105. El archivo que falta es {0}.</ErrorText>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets'))" />
   </Target>

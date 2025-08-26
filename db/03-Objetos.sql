@@ -111,9 +111,48 @@ BEGIN
 END;
 GO
 
+-- Store procedure para el cambio de Role en usuarios.
+
+CREATE OR ALTER PROCEDURE dbo.sp_cambiarRolUsuario
+    @usuario NVARCHAR(50),
+    @nuevoRol NVARCHAR(50),
+    @message NVARCHAR(100) OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Verificar si el usuario existe
+    IF NOT EXISTS (SELECT 1 FROM dbo.users WHERE usuario = @usuario)
+    BEGIN
+        SET @message = 'El usuario no existe';
+        RETURN;
+    END
+
+    -- Actualizar el rol del usuario
+    UPDATE dbo.users
+    SET rol = @nuevoRol
+    WHERE usuario = @usuario;
+
+    SET @message = 'Rol actualizado correctamente';
+END;
+GO
 
 
+/*
 
+DECLARE @msg NVARCHAR(100);
+
+EXEC dbo.sp_cambiarRolUsuario 
+    @usuario = 'erubiales',
+    @nuevoRol = 'Admin',
+    @message = @msg OUTPUT;
+
+SELECT @msg AS Resultado;
+
+
+use nominaDB
+select * from users
+*/
 
 
 
@@ -651,4 +690,5 @@ BEGIN
     GROUP BY d.dept_name;
 END;
 GO
+
 

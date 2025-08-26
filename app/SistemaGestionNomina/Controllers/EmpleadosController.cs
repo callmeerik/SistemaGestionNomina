@@ -1,20 +1,22 @@
-﻿using System;
+﻿using SistemaGestionNomina.Filters;
+using SistemaGestionNomina.Models;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Web.Mvc;
-using SistemaGestionNomina.Models;
+using System.Linq;
 using System.Net.Configuration;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Mvc;
 
 namespace SistemaGestionNomina.Controllers
 {
     public class EmpleadosController : Controller
     {
         // GET: Empleados
+        [AuthorizeRole("Admin", "RRHH")]
         public ActionResult Index(string query, string estado = "Todos", int pagina = 1, int numElementosPg = 10)
         {
             List<Empleados> empleados = new List<Empleados>();
@@ -111,6 +113,7 @@ namespace SistemaGestionNomina.Controllers
         }
 
         [HttpGet]
+        [AuthorizeRole("Admin", "RRHH")]
         public ActionResult EditarEmpleado(int emp_no)
         {
             Empleados emp = null;
@@ -213,6 +216,7 @@ namespace SistemaGestionNomina.Controllers
 
         //Creacion de empleados y usuarios
         [HttpGet]
+        [AuthorizeRole("Admin", "RRHH")]
         public ActionResult CrearEmpleado()
         {
             return View();

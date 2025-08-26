@@ -1,15 +1,17 @@
-﻿using System;
+﻿using SistemaGestionNomina.Filters;
+using SistemaGestionNomina.Models;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Web.Mvc;
-using SistemaGestionNomina.Models;
 
 namespace TuProyecto.Controllers
 {
     public class AuditoriaSalariosController : Controller
     {
         // GET: LogAuditoria
+        [AuthorizeRole("Admin", "RRHH")]
         public ActionResult Index()
         {
             var lista = new List<AuditoriaSalarios>();

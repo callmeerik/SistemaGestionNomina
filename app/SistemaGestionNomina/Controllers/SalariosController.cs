@@ -1,4 +1,5 @@
-﻿using SistemaGestionNomina.Models;
+﻿using SistemaGestionNomina.Filters;
+using SistemaGestionNomina.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -13,6 +14,7 @@ namespace SistemaGestionNomina.Controllers
         private readonly string connectionString = ConfigurationManager.ConnectionStrings["Cnn"].ConnectionString;
 
         // ✅ GET: Salarios (lista de empleados con salario actual)
+        [AuthorizeRole("Admin", "RRHH")]
         public ActionResult Index(int pagina = 1, int registrosPorPagina = 10)
         {
             var empleados = new List<EmpleadoSalarioActual>();
@@ -51,6 +53,7 @@ namespace SistemaGestionNomina.Controllers
         }
 
         // ✅ GET: Historial de un empleado
+        [AuthorizeRole("Admin", "RRHH")]
         public ActionResult Historial(int id)
         {
             var historial = new List<HistorialSalario>();
@@ -80,6 +83,7 @@ namespace SistemaGestionNomina.Controllers
         }
 
         // GET: Mostrar formulario para asignar salario
+        [AuthorizeRole("Admin", "RRHH")]
         public ActionResult AsignarSalario(int emp_no)
         {
             // Traer datos del empleado para mostrar en la vista

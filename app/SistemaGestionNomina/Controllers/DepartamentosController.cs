@@ -1,24 +1,21 @@
-﻿using System;
+﻿using SistemaGestionNomina.Filters;
+using SistemaGestionNomina.Models;
+using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Web;
 using System.Web.Mvc;
-using SistemaGestionNomina.Models;
-using System.Security.Cryptography;
-using System.Data.SqlClient;
-using System.Data;
-using System.Configuration;
-
-
 
 namespace SistemaGestionNomina.Controllers
 {
-   
-
-
     public class DepartamentosController : Controller
     {
         [HttpGet]
+        [AuthorizeRole("Admin", "RRHH")]
         public ActionResult Departamento()
         {
             //return RedirectToAction("Agregar");
@@ -29,6 +26,7 @@ namespace SistemaGestionNomina.Controllers
 
 
         [HttpGet]
+        [AuthorizeRole("Admin", "RRHH")]
         public ActionResult Agregar()
         {
             ViewBag.ActiveTab = "agregar";
@@ -65,16 +63,10 @@ namespace SistemaGestionNomina.Controllers
         }
 
 
-
-
-
-
-
-
-
         //Gestor de Consultas de Departamentos
 
         [HttpGet]
+        [AuthorizeRole("Admin", "RRHH")]
         public ActionResult Consultar()
         {
             var dt_consultar = new DataTable();
@@ -135,6 +127,7 @@ namespace SistemaGestionNomina.Controllers
         //}
 
         [HttpGet]
+        [AuthorizeRole("Admin", "RRHH")]
         public ActionResult AsignarESD()
         {
             var dtEmpl = new DataTable();
@@ -214,8 +207,6 @@ namespace SistemaGestionNomina.Controllers
         }
 
 
-
-
         // Gestor para asginar departamentos
         private List<SelectListItem> LoadDepartamentosDDL(int? excluirDeptNo = null)
         {
@@ -239,6 +230,7 @@ namespace SistemaGestionNomina.Controllers
 
 
         [HttpGet]
+        [AuthorizeRole("Admin", "RRHH")]
         public ActionResult Asignar()
         {
             ViewBag.DepartamentosDDL = LoadDepartamentosDDL();
@@ -341,6 +333,7 @@ namespace SistemaGestionNomina.Controllers
         // Consulta de historial de cambios de departamentos por empleados
 
         [HttpGet]
+        [AuthorizeRole("Admin", "RRHH")]
         public ActionResult Historial()
         {
             var dt_historial = new DataTable();

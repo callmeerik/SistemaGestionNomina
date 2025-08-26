@@ -32,7 +32,7 @@ namespace SistemaGestionNomina.Controllers
 
                 using (SqlConnection cn = new SqlConnection(connectionString))
                 {
-                    SqlCommand cmd = new SqlCommand("sp_userAuthentication", cn);
+                    SqlCommand cmd = new SqlCommand("sp_userAuthentications", cn);
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     cmd.Parameters.AddWithValue("@usuario", user.usuario);

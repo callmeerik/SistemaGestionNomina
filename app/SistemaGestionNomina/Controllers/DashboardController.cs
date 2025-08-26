@@ -1,4 +1,5 @@
-﻿using SistemaGestionNomina.Models;
+﻿using SistemaGestionNomina.Filters;
+using SistemaGestionNomina.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -14,6 +15,8 @@ namespace SistemaGestionNomina.Controllers
     public class DashboardController : Controller
     {
         private string connectionString = ConfigurationManager.ConnectionStrings["Cnn"].ConnectionString;
+        
+        [AuthorizeRole("Admin", "RRHH")]
         public ActionResult Index()
         {
             Dashboard dashModel = new Dashboard();

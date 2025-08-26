@@ -1,17 +1,19 @@
-﻿using System;
+﻿using SistemaGestionNomina.Filters;
+using SistemaGestionNomina.Models;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web.Mvc;
-using SistemaGestionNomina.Models;
 
 namespace SistemaGestionNomina.Controllers
 {
     public class CargosController : Controller
     {
         // Lista de empleados con cargo actual y opción de buscar por cédula
+        [AuthorizeRole("Admin", "RRHH")]
         public ActionResult Index(string ci = null)
         {
             List<Cargos> lista = new List<Cargos>();
@@ -57,6 +59,7 @@ namespace SistemaGestionNomina.Controllers
 
         // GET: Asignar cargo
         [HttpGet]
+        [AuthorizeRole("Admin", "RRHH")]
         public ActionResult AsignarCargo(int emp_no)
         {
             Cargos empleado = new Cargos();
@@ -122,6 +125,7 @@ namespace SistemaGestionNomina.Controllers
         }
 
         // Historial de cargos
+        [AuthorizeRole("Admin", "RRHH")]
         public ActionResult Historial(int emp_no)
         {
             List<Historial> historial = new List<Historial>();
