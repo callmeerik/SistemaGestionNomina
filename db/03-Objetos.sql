@@ -1,7 +1,6 @@
 ﻿use nominaDB
 go
 
-select * from users
 
 /*
 ===============================================
@@ -11,7 +10,7 @@ select * from users
 
 -- Store procedure para Login
 
-CREATE OR ALTER PROCEDURE sp_userAuthentication
+CREATE OR ALTER PROCEDURE sp_userAuthentications
     @usuario nvarchar(50),
     @clave nvarchar(64),
     @message nvarchar(100) OUTPUT
